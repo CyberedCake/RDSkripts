@@ -1,0 +1,73 @@
+# ------------------------------------------------------------------------------------------------------
+# REBELDUPE SKRIPT
+# > viewstats.sk
+#
+# This is one of the publicly-released scripts from RebelDupe on github.com/CyberedCake/RDScripts. Feel free to use whatever you'd like or use the script in your server altogether to help keep the void dupe genre alive or maybe for your own server ideas!
+#
+# Thank you to the developers who created these: Lynxdeer, TehCheese, Luke, and CyberedCake
+# Thank you to the RebelDupe community for supporting us and making the best possible few years (writing on February 2022) that we could ever ask for. This server has created memories for all and we thank every single one of you out there for it, no matter how big or small of an impact you had.
+# THANK *YOU*!
+#
+# For now, the Discord server will remain alive, which you can join at dsc.gg/rebeldupe
+# If you need any help, you can direct message any of the developers of these scripts:
+#   Lynxdeer  (Lynxdeer#5243    ||  431961511557070868)
+#   Cheese    (TehCheese#1075   ||  493453098199547905)
+#   Luke      (LukeIThink#5106  ||  296823576156307467)
+#   Cyber     (CyberCake#9221   ||  351410272256262145)
+# And if you need help with anything else, you can DM Rebel (the creator and owner of RebelDupe):
+#   Rebel     (Butler#3727      ||  193938515342393345)
+#
+# IMPORTANT SKRIPT NOTE: Some of these scripts rely on certain locations, variables, people, etc. that will need to be adjusted for a server if any developers out there are going to use it for their purposes
+#
+# This text doesn't have to stay, remove it if you wish
+# ------------------------------------------------------------------------------------------------------
+
+command /viewstats <offlineplayer>:
+	usage: &cInvalid usage! &7/viewstats <player>
+	aliases: /stats, /rebeldupe:viewstats, /rebeldupe:stats
+	trigger:
+		if {joined::%arg 1's uuid%} is not set:
+			send "&cYou cannot view stats for a player who has never logged in!"
+			stop
+		set {_firstlogin} to {joineddate::%arg 1's uuid%}
+		set {_lastlogin} to {lastlogin::%arg 1's uuid%}
+		set {_lastlogin} to 4 hours ago
+		if {online.%arg 1%} is not set:
+			set {_online} to "&c&l[OFFLINE]"
+		if {online.%arg 1%} is true:
+			set {_online} to "&a&l[ONLINE]"
+		if {vanish::%arg 1's uuid%} is true:
+			set {_online} to "&c&l[OFFLINE]"
+			set {_lastlogin} to "%{vanish.faketime::%arg 1's uuid%}%"
+		send "&b"
+		if {online.%arg 1%} is true:
+			json("%player%", "&eUsername: ||||&f%arg 1%||ttp:&eDisplay Name: &f%arg 1's display name%|||| &f%{_online}%")
+		if {online.%arg 1%} is not set:
+			json("%player%", "&eUsername: ||||&f%arg 1%||ttp:&eDisplay Name: &f%{dispname.%arg 1%}%|||| &f%{_online}%")
+		if {online.%arg 1%} is true:
+			send "&eRank: &f%arg 1's prefix%"
+		if {online.%arg 1%} is not set:
+			send "&eRank: &f%{rank.%arg 1%}%"
+		send "&eFirst Login: &f%{_firstlogin}% &7(##%{joined::%arg 1's uuid%}%&7)"
+		send "&eLast Login: &f%{_lastlogin}%"
+		if arg-1's balance is not set:
+			send "&eBalance: &f$0"
+		if arg-1's balance is set:
+			if {online.%arg 1%} is true:
+				send "&eBalance: &f%arg 1's balance%"
+			if {online.%arg 1%} is not set:
+				send "&eBalance: &f%{balance.%arg 1%}%"
+		send "&eKills: &f%{kills::%arg 1's uuid%}%"
+		send "&eDeaths: &f%{deaths::%arg 1's uuid%}%"
+		if {totaldupes::%arg 1's uuid%} is not set:
+			set {totaldupes::%arg 1's uuid%} to 0
+		send "&eDupes: &f%{totaldupes::%arg 1's uuid%}%"
+		send "&b"
+
+on join:
+	if {kills::%player's uuid%} is not set:
+		set {kills::%player's uuid%} to 0
+		set {deaths::%player's uuid%} to 0
+
+on quit:
+	set {balance.%player%} to player's balance

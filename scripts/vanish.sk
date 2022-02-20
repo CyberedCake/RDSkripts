@@ -1,0 +1,197 @@
+# ------------------------------------------------------------------------------------------------------
+# REBELDUPE SKRIPT
+# > vanish.sk
+#
+# This is one of the publicly-released scripts from RebelDupe on github.com/CyberedCake/RDScripts. Feel free to use whatever you'd like or use the script in your server altogether to help keep the void dupe genre alive or maybe for your own server ideas!
+#
+# Thank you to the developers who created these: Lynxdeer, TehCheese, Luke, and CyberedCake
+# Thank you to the RebelDupe community for supporting us and making the best possible few years (writing on February 2022) that we could ever ask for. This server has created memories for all and we thank every single one of you out there for it, no matter how big or small of an impact you had.
+# THANK *YOU*!
+#
+# For now, the Discord server will remain alive, which you can join at dsc.gg/rebeldupe
+# If you need any help, you can direct message any of the developers of these scripts:
+#   Lynxdeer  (Lynxdeer#5243    ||  431961511557070868)
+#   Cheese    (TehCheese#1075   ||  493453098199547905)
+#   Luke      (LukeIThink#5106  ||  296823576156307467)
+#   Cyber     (CyberCake#9221   ||  351410272256262145)
+# And if you need help with anything else, you can DM Rebel (the creator and owner of RebelDupe):
+#   Rebel     (Butler#3727      ||  193938515342393345)
+#
+# IMPORTANT SKRIPT NOTE: Some of these scripts rely on certain locations, variables, people, etc. that will need to be adjusted for a server if any developers out there are going to use it for their purposes
+#
+# This text doesn't have to stay, remove it if you wish
+# ------------------------------------------------------------------------------------------------------
+
+#vanish
+#
+#
+#
+#
+#d
+#
+#
+#
+
+every 2 ticks:
+	delete {playercount}
+	loop all players:
+		if {vanish::%loop-player's uuid%} is not set:
+			add 1 to {playercount}
+
+on join:
+	if {vanish::%player's uuid%} is not set:
+		set player's tablist name to "%player's display name%"
+		set the join message to "&8[&a+&8] &a%player% &ajoined"
+		loop all players:
+			if {vanish::%loop-player's uuid%} is true:
+				if player does not have permission "staff.vanish":
+					hide the loop-player from the player
+	if {vanish::%player's uuid%} is true:
+		set the join message to ""
+		set player's tablist name to "&7[V] &r%player's display name%"
+		send "&aYou're still vanished!"
+		loop all players:
+			if loop-player is not player:
+				if loop-player has permission "staff.vanish":
+					send "&7&o[VANISHED] &8[&a+&8] &a%player% &ajoined!" to loop-player
+				if loop-player does not have permission "staff.vanish":
+					hide the player from the loop-player
+
+on quit:
+	if {vanish::%player's uuid%} is not set:
+		set the quit message to "&8[&c-&8] &c%player% &cquit"
+	if {vanish::%player's uuid%} is true:
+		set the quit message to ""
+		set player's tablist name to "&r%player's display name%"
+		loop all players:
+			if loop-player is not player:
+				if loop-player has permission "staff.vanish":
+					send "&7&o[VANISHED] &8[&c-&8] &c%player% &cquit!" to loop-player
+				if loop-player does not have permission "staff.vanish":
+					reveal the player from the loop-player
+
+command /v [<text>]:
+	aliases: /sv, /rebeldupe:v, /rebeldupe:sv
+	trigger:
+		if arg 1 is not set:
+			make player execute command "vanish"
+			stop
+		if arg 1 is set:
+			make player execute command "vanish %arg 1%"
+			stop
+
+command /vanish [<offlineplayer>]:
+	usage: &cInvalid usage! &7/vanish [-s]/[tip]/[player]
+	permission: staff.vanish
+	permission message: &cYou do not have permission to execute this command.
+	aliases: /rebeldupe:vanish
+	trigger:
+		if arg 1 is not set:
+			if {vanish::%player's uuid%} is not set:
+				send "&aYou vanished!"
+				set player's tablist name to "&7[V] &f%player's display name%"
+				loop all players:
+					if player is not loop-player:
+						if loop-player has permission "staff.vanish":
+							send "&9Vanish > &f%player's display name% &avanished!" to loop-player
+						if loop-player does not have permission "staff.vanish":
+							send "&8[&c-&8] &c%player% &cquit!" to loop-player
+							hide the player from the loop-player
+				send action bar "&fYou are currently &cVANISHED" to player
+				set {vanish::%player's uuid%} to true
+				set {vanish.faketime::%player's uuid%} to now formatted as "MM/dd/yyyy h:mm:ss aa"
+				set {vanish.faketime::%player's uuid%} to 4 hours ago
+				stop
+			if {vanish::%player's uuid%} is true:
+				send "&cYou unvanished!"
+				loop all players:
+					if player is not loop-player:
+						if loop-player has permission "staff.vanish":
+							send "&9Vanish > &f%player's display name% &cunvanished!" to loop-player
+						if loop-player does not have permission "staff.vanish":
+							send "&8[&a+&8] &a%player% &ajoined!" to loop-player
+							reveal the player from the loop-player
+				send action bar "&f" to player
+				delete {vanish::%player's uuid%}
+				set player's tablist name to "%player's display name%"
+				stop
+		if arg 1 is "-s" or "-silent":
+			if {vanish::%player's uuid%} is not set:
+				send "&7&o[SILENT] &aYou vanished!"
+				set player's tablist name to "&7[V] &f%player's display name%"
+				loop all players:
+					if player is not loop-player:
+						if loop-player has permission "staff.vanish":
+							send "&9Vanish > &7&o[SILENT] &f%player's display name% &avanished!" to loop-player
+						if loop-player does not have permission "staff.vanish":
+							hide the player from the loop-player
+				send action bar "&fYou are currently &cVANISHED" to player
+				set {vanish::%player's uuid%} to true
+				stop
+			else if {vanish::%player's uuid%} is true:
+				send "&7&o[SILENT] &cYou unvanished!"
+				loop all players:
+					if player is not loop-player:
+						if loop-player has permission "staff.vanish":
+							send "&9Vanish > &7&o[SILENT] &f%player's display name% &cunvanished!" to loop-player
+						if loop-player does not have permission "staff.vanish":
+							reveal the player from the loop-player
+				send action bar "&f" to player
+				delete {vanish::%player's uuid%}
+				set player's tablist name to "%player's display name%"
+				stop
+		if arg 1 is "toggleitempickup" or "tip" or "tipu":
+			if {vanishitempickup::%player's uuid%} is not set:
+				send "&aYou enabled VANISHED item pickup"
+				set {vanishitempickup::%player's uuid%} to false
+				stop
+			else if {vanishitempickup::%player's uuid%} is false:
+				send "&cYou disabled VANISHED item pickup"
+				delete {vanishitempickup::%player's uuid%}
+				stop
+		else:
+			send "&cUnknown sub command: %arg 1%"
+			cancel cooldown
+
+on pickup:
+	if {vanish::%player's uuid%} is true:
+		if {vanishitempickup::%player's uuid%} is not set:
+			cancel event
+
+on damage of player:
+	if {vanish::%victim's uuid%} is true:
+		cancel event
+
+every 2 ticks:
+	loop all players:
+		if {vanish::%loop-player's uuid%} is true:
+			loop all players:
+				if loop-player-2 is not loop-player-1:
+					if loop-player-2 does not have permission "staff.vanish":
+						hide the loop-player-1 from the loop-player-2
+					if loop-player-2 has permission "staff.vanish":
+						reveal the loop-player-1 from the loop-player-2
+			set loop-player's tablist name to "&7[V] &r%loop-player's display name%"
+		if {vanish::%loop-player's uuid%} is not set:
+			reveal the loop-player from all players
+			set loop-player's tablist name to "&r%loop-player's display name%"
+
+on command "nick off":
+	send action bar "&b" to player
+
+on join:
+	while player is online:
+		wait 1 tick
+		set {_nick} to placeholder "essentials_nickname"
+		if {_nick} is not player:
+			if {vanish::%player's uuid%} is not set:
+				send action bar "&fYou are currently &cNICKED" to player
+			if {vanish::%player's uuid%} is true:
+				send action bar "&fYou are currently &cVANISHED&f, &cNICKED" to player
+		if {_nick} is player:
+			if {vanish::%player's uuid%} is true:
+				send action bar "&fYou are currently &cVANISHED" to player
+
+on entity target:
+	if {vanish::%entity's target's uuid%} is true:
+		cancel event

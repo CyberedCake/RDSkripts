@@ -1,0 +1,48 @@
+# ------------------------------------------------------------------------------------------------------
+# REBELDUPE SKRIPT
+# > scoreboard.sk
+#
+# This is one of the publicly-released scripts from RebelDupe on github.com/CyberedCake/RDScripts. Feel free to use whatever you'd like or use the script in your server altogether to help keep the void dupe genre alive or maybe for your own server ideas!
+#
+# Thank you to the developers who created these: Lynxdeer, TehCheese, Luke, and CyberedCake
+# Thank you to the RebelDupe community for supporting us and making the best possible few years (writing on February 2022) that we could ever ask for. This server has created memories for all and we thank every single one of you out there for it, no matter how big or small of an impact you had.
+# THANK *YOU*!
+#
+# For now, the Discord server will remain alive, which you can join at dsc.gg/rebeldupe
+# If you need any help, you can direct message any of the developers of these scripts:
+#   Lynxdeer  (Lynxdeer#5243    ||  431961511557070868)
+#   Cheese    (TehCheese#1075   ||  493453098199547905)
+#   Luke      (LukeIThink#5106  ||  296823576156307467)
+#   Cyber     (CyberCake#9221   ||  351410272256262145)
+# And if you need help with anything else, you can DM Rebel (the creator and owner of RebelDupe):
+#   Rebel     (Butler#3727      ||  193938515342393345)
+#
+# IMPORTANT SKRIPT NOTE: Some of these scripts rely on certain locations, variables, people, etc. that will need to be adjusted for a server if any developers out there are going to use it for their purposes
+#
+# This text doesn't have to stay, remove it if you wish
+# ------------------------------------------------------------------------------------------------------
+
+every 10 ticks:
+	loop all players:
+		set {_tps} to tps from the last minute
+		if {_tps} >= 20:
+			set {_tps} to 20
+		erase loop-player's sidebar
+		set name of sidebar of loop-player to "&aRebel&dDupe &e&lSEASON 4"
+		set score "&7RebelDupe.minehut.gg" in sidebar of loop-player to 8
+		set score "&7| &3Rank: &f%loop-player's prefix%" in sidebar of loop-player to 6
+		set score "&7| &3TPS: &f%{_tps}%" in sidebar of loop-player to 5
+		set score "&7| &3Ping: &f%loop-player's ping%&fms" in sidebar of loop-player to 4
+		set score "&7| &3Online: &f%{playercount}%&f/69" in sidebar of loop-player to 3
+		set score "&7| &3Unique Joins: &f%{joinnumber}%" in sidebar of loop-player to 2
+		set score "&7| &3Balance: &f%loop-player's balance%" in sidebar of loop-player to 1
+		if {reboot} is set:
+			set score "&c" in sidebar of loop-player to 9
+			set score "&cServer reboot in %{reboot}%&cs" in sidebar of loop-player to 10
+		if {shutdown} is set:
+			set score "&c" in sidebar of loop-player to 9
+			set score "&cServer shutdown in %{shutdown}%&cs" in sidebar of loop-player to 10
+		if {vanish::%loop-player's uuid%} is not set:
+			set score "&7| &3Player: &f%loop-player%" in sidebar of loop-player to 7
+		if {vanish::%loop-player's uuid%} is true:
+			set score "&7| &3Player: &f%loop-player% &7[V]" in sidebar of loop-player to 7

@@ -1,0 +1,433 @@
+# ------------------------------------------------------------------------------------------------------
+# REBELDUPE SKRIPT
+# > grant.sk
+#
+# This is one of the publicly-released scripts from RebelDupe on github.com/CyberedCake/RDScripts. Feel free to use whatever you'd like or use the script in your server altogether to help keep the void dupe genre alive or maybe for your own server ideas!
+#
+# Thank you to the developers who created these: Lynxdeer, TehCheese, Luke, and CyberedCake
+# Thank you to the RebelDupe community for supporting us and making the best possible few years (writing on February 2022) that we could ever ask for. This server has created memories for all and we thank every single one of you out there for it, no matter how big or small of an impact you had.
+# THANK *YOU*!
+#
+# For now, the Discord server will remain alive, which you can join at dsc.gg/rebeldupe
+# If you need any help, you can direct message any of the developers of these scripts:
+#   Lynxdeer  (Lynxdeer#5243    ||  431961511557070868)
+#   Cheese    (TehCheese#1075   ||  493453098199547905)
+#   Luke      (LukeIThink#5106  ||  296823576156307467)
+#   Cyber     (CyberCake#9221   ||  351410272256262145)
+# And if you need help with anything else, you can DM Rebel (the creator and owner of RebelDupe):
+#   Rebel     (Butler#3727      ||  193938515342393345)
+#
+# IMPORTANT SKRIPT NOTE: Some of these scripts rely on certain locations, variables, people, etc. that will need to be adjusted for a server if any developers out there are going to use it for their purposes
+#
+# This text doesn't have to stay, remove it if you wish
+# ------------------------------------------------------------------------------------------------------
+
+on inventory close:
+	delete {grantgui.%player%}
+	delete {giverank.%player%}
+	delete {rankgrant.%player%}
+	delete {grconfirm.%player%}
+	delete {grantsgui.%player%}
+
+
+
+
+#Main gui:
+on inventory click:
+	if {grantgui.%player%} is set:
+		cancel event
+		if item is light gray terracotta with no nbt named "&7Non-staff" with lore "&7Click to grant %{gp.%player%}% &7with a Non-staff rank.":
+			play sound "ui.button.click" with volume 2 and pitch 1 to the player
+			open virtual chest inventory with size 3 named "&6Grant %{gp.%player%}%" to sender
+			set {_slot} to 0
+			loop 9 times:
+				format slot {_slot} of player with gray stained glass pane with no nbt named "&7" to run [stop]
+				add 1 to {_slot}
+			set {_slot} to 18
+			loop 9 times:
+				format slot {_slot} of player with gray stained glass pane with no nbt named "&7" to run [stop]
+				add 1 to {_slot}
+			format slot 9 of player with gray wool with no nbt named "&7Default" to run [stop]
+			format slot 10 of player with pink wool with no nbt named "&dWarrior" to run [stop]
+			format slot 11 of player with green wool with no nbt named "&2Guard &c(No longer a rank)" to run [stop]
+			format slot 12 of player with orange wool with no nbt named "&6Lord" to run [stop]
+			format slot 13 of player with blue wool with no nbt named "&9Beta Tester" to run [stop]
+			format slot 22 of player with arrow with no nbt named "&fGo back" with lore "&7Go back to main menu" to run [stop]
+			set {giverank.%player%} to true 
+		if item is orange terracotta with no nbt named "&6Staff" with lore "&7Click to grant %{gp.%player%}% &7with a &6Staff &7rank.":
+			play sound "ui.button.click" with volume 2 and pitch 1 to the player
+			open virtual chest inventory with size 3 named "&6Grant %{gp.%player%}%" to sender
+			set {_slot} to 0
+			loop 9 times:
+				format slot {_slot} of player with gray stained glass pane with no nbt named "&7" to run [stop]
+				add 1 to {_slot}
+			set {_slot} to 18
+			loop 9 times:
+				format slot {_slot} of player with gray stained glass pane with no nbt named "&7" to run [stop]
+				add 1 to {_slot}
+			format slot 9 of player with light blue wool with no nbt named "&bHelper" to run [stop]
+			format slot 10 of player with yellow wool with no nbt named "&eMod" to run [stop]
+			format slot 11 of player with yellow wool with no nbt named "&eSr. Mod" to run [stop]
+			format slot 12 of player with red wool with no nbt named "&cAdmin" to run [stop]
+			format slot 13 of player with red wool with no nbt named "&cSr. Admin" to run [stop]
+			format slot 14 of player with lime wool with no nbt named "&aDev" to run [stop]
+			format slot 15 of player with lime wool with no nbt named "&aHead Dev" to run [stop]
+			format slot 16 of player with purple wool with no nbt named "&5Manager" to run [stop]
+			format slot 17 of player with white wool with no nbt named "&fOwner" to run [stop]
+			format slot 22 of player with arrow with no nbt named "&fGo back" with lore "&7Go back to main menu" to run [stop]
+			set {giverank.%player%} to true
+		if item is light blue terracotta with no nbt named "&bSkript" with lore "&7Click to grant %{gp.%player%}% &7with a &bSkript permission.":
+			cancel event
+			play sound "ui.button.click" with volume 2 and pitch 1 to the player
+			open virtual chest inventory with size 3 named "&6Grant %{gp.%player%}%" to sender
+			set {_slot} to 0
+			loop 9 times:
+				format slot {_slot} of player with gray stained glass pane with no nbt named "&7" to run [stop]
+				add 1 to {_slot}
+			set {_slot} to 18
+			loop 9 times:
+				format slot {_slot} of player with gray stained glass pane with no nbt named "&7" to run [stop]
+				add 1 to {_slot}
+			set {_slot} to 9
+			loop 9 times:
+				format slot {_slot} of player with red wool with no nbt named "&4&lWIP" to run [stop]
+				add 1 to {_slot}
+			format slot 22 of player with arrow with no nbt named "&fGo back" with lore "&7Go back to main menu" to run [stop]
+			set {giverank.%player%} to true
+
+
+
+	if {giverank.%player%} is set:
+		cancel event
+		if item is white wool with no nbt named "&fOwner":
+			play sound "ui.button.click" with volume 2 and pitch 1 to the player
+			set {grant.%player%.rank} to "owner"
+			open virtual chest inventory with size 3 named "&6Confirm Grant" to sender
+			set {_slot} to 0
+			loop 9 times:
+				format slot {_slot} of player with gray stained glass pane with no nbt named "&7" to run [stop]
+				add 1 to {_slot}
+			set {_slot} to 18
+			loop 9 times:
+				format slot {_slot} of player with gray stained glass pane with no nbt named "&7" to run [stop]
+				add 1 to {_slot}
+			format slot 12 of player with lime wool with no nbt named "&aConfirm" with lore "&aConfirm the grant" to run [stop]
+			format slot 14 of player with red wool with no nbt named "&cCancel" with lore "&cCancel the grant" to run [stop]
+			format slot 22 of player with arrow with no nbt named "&7Go back" with lore "&7Go back 1 menu" to run [stop]
+			set {grconfirm.%player%} to true
+			delete {giverank.%player%}
+		if item is purple wool with no nbt named "&5Manager":
+			play sound "ui.button.click" with volume 2 and pitch 1 to the player
+			set {grant.%player%.rank} to "manager"
+			open virtual chest inventory with size 3 named "&6Confirm Grant" to sender
+			set {_slot} to 0
+			loop 9 times:
+				format slot {_slot} of player with gray stained glass pane with no nbt named "&7" to run [stop]
+				add 1 to {_slot}
+			set {_slot} to 18
+			loop 9 times:
+				format slot {_slot} of player with gray stained glass pane with no nbt named "&7" to run [stop]
+				add 1 to {_slot}
+			format slot 12 of player with lime wool with no nbt named "&aConfirm" with lore "&aConfirm the grant" to run [stop]
+			format slot 14 of player with red wool with no nbt named "&cCancel" with lore "&cCancel the grant" to run [stop]
+			format slot 22 of player with arrow with no nbt named "&7Go back" with lore "&7Go back 1 menu" to run [stop]
+			set {grconfirm.%player%} to true
+			delete {giverank.%player%}
+		if item is lime wool with no nbt named "&aHead Dev":
+			play sound "ui.button.click" with volume 2 and pitch 1 to the player
+			set {grant.%player%.rank} to "HeadDev"
+			open virtual chest inventory with size 3 named "&6Confirm Grant" to sender
+			set {_slot} to 0
+			loop 9 times:
+				format slot {_slot} of player with gray stained glass pane with no nbt named "&7" to run [stop]
+				add 1 to {_slot}
+			set {_slot} to 18
+			loop 9 times:
+				format slot {_slot} of player with gray stained glass pane with no nbt named "&7" to run [stop]
+				add 1 to {_slot}
+			format slot 12 of player with lime wool with no nbt named "&aConfirm" with lore "&aConfirm the grant" to run [stop]
+			format slot 14 of player with red wool with no nbt named "&cCancel" with lore "&cCancel the grant" to run [stop]
+			format slot 22 of player with arrow with no nbt named "&7Go back" with lore "&7Go back 1 menu" to run [stop]
+			set {grconfirm.%player%} to true
+			delete {giverank.%player%}
+		if item is lime wool with no nbt named "&aDev":
+			play sound "ui.button.click" with volume 2 and pitch 1 to the player
+			set {grant.%player%.rank} to "dev"
+			open virtual chest inventory with size 3 named "&6Confirm Grant" to sender
+			set {_slot} to 0
+			loop 9 times:
+				format slot {_slot} of player with gray stained glass pane with no nbt named "&7" to run [stop]
+				add 1 to {_slot}
+			set {_slot} to 18
+			loop 9 times:
+				format slot {_slot} of player with gray stained glass pane with no nbt named "&7" to run [stop]
+				add 1 to {_slot}
+			format slot 12 of player with lime wool with no nbt named "&aConfirm" with lore "&aConfirm the grant" to run [stop]
+			format slot 14 of player with red wool with no nbt named "&cCancel" with lore "&cCancel the grant" to run [stop]
+			format slot 22 of player with arrow with no nbt named "&7Go back" with lore "&7Go back 1 menu" to run [stop]
+			set {grconfirm.%player%} to true
+			delete {giverank.%player%}
+		if item is red wool with no nbt named "&cSr. Admin":
+			play sound "ui.button.click" with volume 2 and pitch 1 to the player
+			set {grant.%player%.rank} to "sradmin"
+			open virtual chest inventory with size 3 named "&6Confirm Grant" to sender
+			set {_slot} to 0
+			loop 9 times:
+				format slot {_slot} of player with gray stained glass pane with no nbt named "&7" to run [stop]
+				add 1 to {_slot}
+			set {_slot} to 18
+			loop 9 times:
+				format slot {_slot} of player with gray stained glass pane with no nbt named "&7" to run [stop]
+				add 1 to {_slot}
+			format slot 12 of player with lime wool with no nbt named "&aConfirm" with lore "&aConfirm the grant" to run [stop]
+			format slot 14 of player with red wool with no nbt named "&cCancel" with lore "&cCancel the grant" to run [stop]
+			format slot 22 of player with arrow with no nbt named "&7Go back" with lore "&7Go back 1 menu" to run [stop]
+			set {grconfirm.%player%} to true
+			delete {giverank.%player%}
+		if item is red wool with no nbt named "&cAdmin":
+			play sound "ui.button.click" with volume 2 and pitch 1 to the player
+			set {grant.%player%.rank} to "admin"
+			open virtual chest inventory with size 3 named "&6Confirm Grant" to sender
+			set {_slot} to 0
+			loop 9 times:
+				format slot {_slot} of player with gray stained glass pane with no nbt named "&7" to run [stop]
+				add 1 to {_slot}
+			set {_slot} to 18
+			loop 9 times:
+				format slot {_slot} of player with gray stained glass pane with no nbt named "&7" to run [stop]
+				add 1 to {_slot}
+			format slot 12 of player with lime wool with no nbt named "&aConfirm" with lore "&aConfirm the grant" to run [stop]
+			format slot 14 of player with red wool with no nbt named "&cCancel" with lore "&cCancel the grant" to run [stop]
+			format slot 22 of player with arrow with no nbt named "&7Go back" with lore "&7Go back 1 menu" to run [stop]
+			set {grconfirm.%player%} to true
+			delete {giverank.%player%}
+		if item is yellow wool with no nbt named "&eSr. Mod":
+			play sound "ui.button.click" with volume 2 and pitch 1 to the player
+			set {grant.%player%.rank} to "srmod"
+			open virtual chest inventory with size 3 named "&6Confirm Grant" to sender
+			set {_slot} to 0
+			loop 9 times:
+				format slot {_slot} of player with gray stained glass pane with no nbt named "&7" to run [stop]
+				add 1 to {_slot}
+			set {_slot} to 18
+			loop 9 times:
+				format slot {_slot} of player with gray stained glass pane with no nbt named "&7" to run [stop]
+				add 1 to {_slot}
+			format slot 12 of player with lime wool with no nbt named "&aConfirm" with lore "&aConfirm the grant" to run [stop]
+			format slot 14 of player with red wool with no nbt named "&cCancel" with lore "&cCancel the grant" to run [stop]
+			format slot 22 of player with arrow with no nbt named "&7Go back" with lore "&7Go back 1 menu" to run [stop]
+			set {grconfirm.%player%} to true
+			delete {giverank.%player%}
+		if item is yellow wool with no nbt named "&eMod":
+			play sound "ui.button.click" with volume 2 and pitch 1 to the player
+			set {grant.%player%.rank} to "mod"
+			open virtual chest inventory with size 3 named "&6Confirm Grant" to sender
+			set {_slot} to 0
+			loop 9 times:
+				format slot {_slot} of player with gray stained glass pane with no nbt named "&7" to run [stop]
+				add 1 to {_slot}
+			set {_slot} to 18
+			loop 9 times:
+				format slot {_slot} of player with gray stained glass pane with no nbt named "&7" to run [stop]
+				add 1 to {_slot}
+			format slot 12 of player with lime wool with no nbt named "&aConfirm" with lore "&aConfirm the grant" to run [stop]
+			format slot 14 of player with red wool with no nbt named "&cCancel" with lore "&cCancel the grant" to run [stop]
+			format slot 22 of player with arrow with no nbt named "&7Go back" with lore "&7Go back 1 menu" to run [stop]
+			set {grconfirm.%player%} to true
+			delete {giverank.%player%}
+		if item is light blue wool with no nbt named "&bHelper":
+			play sound "ui.button.click" with volume 2 and pitch 1 to the player
+			set {grant.%player%.rank} to "Helper"
+			open virtual chest inventory with size 3 named "&6Confirm Grant" to sender
+			set {_slot} to 0
+			loop 9 times:
+				format slot {_slot} of player with gray stained glass pane with no nbt named "&7" to run [stop]
+				add 1 to {_slot}
+			set {_slot} to 18
+			loop 9 times:
+				format slot {_slot} of player with gray stained glass pane with no nbt named "&7" to run [stop]
+				add 1 to {_slot}
+			format slot 12 of player with lime wool with no nbt named "&aConfirm" with lore "&aConfirm the grant" to run [stop]
+			format slot 14 of player with red wool with no nbt named "&cCancel" with lore "&cCancel the grant" to run [stop]
+			format slot 22 of player with arrow with no nbt named "&7Go back" with lore "&7Go back 1 menu" to run [stop]
+			set {grconfirm.%player%} to true
+			delete {giverank.%player%}
+		if item is arrow with no nbt named "&fGo back" with lore "&7Go back to main menu":
+			play sound "ui.button.click" with volume 2 and pitch 1 to the player
+			execute player command "grant %{gp.%player%}%"
+			delete {giverank.%player%}
+		if item is gray wool with no nbt named "&7Default":
+			play sound "ui.button.click" with volume 2 and pitch 1 to the player
+			set {grant.%player%.rank} to "default"
+			open virtual chest inventory with size 3 named "&6Confirm Grant" to sender
+			set {_slot} to 0
+			loop 9 times:
+				format slot {_slot} of player with gray stained glass pane with no nbt named "&7" to run [stop]
+				add 1 to {_slot}
+			set {_slot} to 18
+			loop 9 times:
+				format slot {_slot} of player with gray stained glass pane with no nbt named "&7" to run [stop]
+				add 1 to {_slot}
+			format slot 12 of player with lime wool with no nbt named "&aConfirm" with lore "&aConfirm the grant" to run [stop]
+			format slot 14 of player with red wool with no nbt named "&cCancel" with lore "&cCancel the grant" to run [stop]
+			format slot 22 of player with arrow with no nbt named "&7Go back" with lore "&7Go back 1 menu" to run [stop]
+			set {grconfirm.%player%} to true
+			delete {giverank.%player%}
+			set {gp.%player%.default} to true
+		if item is pink wool with no nbt named "&dWarrior":
+			play sound "ui.button.click" with volume 2 and pitch 1 to the player
+			set {grant.%player%.rank} to "warrior"
+			open virtual chest inventory with size 3 named "&6Confirm Grant" to sender
+			set {_slot} to 0
+			loop 9 times:
+				format slot {_slot} of player with gray stained glass pane with no nbt named "&7" to run [stop]
+				add 1 to {_slot}
+			set {_slot} to 18
+			loop 9 times:
+				format slot {_slot} of player with gray stained glass pane with no nbt named "&7" to run [stop]
+				add 1 to {_slot}
+			format slot 12 of player with lime wool with no nbt named "&aConfirm" with lore "&aConfirm the grant" to run [stop]
+			format slot 14 of player with red wool with no nbt named "&cCancel" with lore "&cCancel the grant" to run [stop]
+			format slot 22 of player with arrow with no nbt named "&7Go back" with lore "&7Go back 1 menu" to run [stop]
+			set {grconfirm.%player%} to true
+			delete {giverank.%player%}
+			set {gp.%player%.warrior} to true
+		if item is green wool with no nbt named "&2Guard":
+			play sound "ui.button.click" with volume 2 and pitch 1 to the player
+			set {grant.%player%.rank} to "guard"
+			open virtual chest inventory with size 3 named "&6Confirm Grant" to sender
+			set {_slot} to 0
+			loop 9 times:
+				format slot {_slot} of player with gray stained glass pane with no nbt named "&7" to run [stop]
+				add 1 to {_slot}
+			set {_slot} to 18
+			loop 9 times:
+				format slot {_slot} of player with gray stained glass pane with no nbt named "&7" to run [stop]
+				add 1 to {_slot}
+			format slot 12 of player with lime wool with no nbt named "&aConfirm" with lore "&aConfirm the grant" to run [stop]
+			format slot 14 of player with red wool with no nbt named "&cCancel" with lore "&cCancel the grant" to run [stop]
+			format slot 22 of player with arrow with no nbt named "&7Go back" with lore "&7Go back 1 menu" to run [stop]
+			set {grconfirm.%player%} to true
+			delete {giverank.%player%}
+			set {gp.%player%.guard} to true
+		if item is orange wool with no nbt named "&6Lord":
+			play sound "ui.button.click" with volume 2 and pitch 1 to the player
+			set {grant.%player%.rank} to "lord"
+			open virtual chest inventory with size 3 named "&6Confirm Grant" to sender
+			set {_slot} to 0
+			loop 9 times:
+				format slot {_slot} of player with gray stained glass pane with no nbt named "&7" to run [stop]
+				add 1 to {_slot}
+			set {_slot} to 18
+			loop 9 times:
+				format slot {_slot} of player with gray stained glass pane with no nbt named "&7" to run [stop]
+				add 1 to {_slot}
+			format slot 12 of player with lime wool with no nbt named "&aConfirm" with lore "&aConfirm the grant" to run [stop]
+			format slot 14 of player with red wool with no nbt named "&cCancel" with lore "&cCancel the grant" to run [stop]
+			format slot 22 of player with arrow with no nbt named "&7Go back" with lore "&7Go back 1 menu" to run [stop]
+			set {grconfirm.%player%} to true
+			delete {giverank.%player%}
+			set {gp.%player%.lord} to true
+		if item is blue wool with no nbt named "&9Beta Tester":
+			play sound "ui.button.click" with volume 2 and pitch 1 to the player
+			set {grant.%player%.rank} to "BetaTester"
+			open virtual chest inventory with size 3 named "&6Confirm Grant" to sender
+			set {_slot} to 0
+			loop 9 times:
+				format slot {_slot} of player with gray stained glass pane with no nbt named "&7" to run [stop]
+				add 1 to {_slot}
+			set {_slot} to 18
+			loop 9 times:
+				format slot {_slot} of player with gray stained glass pane with no nbt named "&7" to run [stop]
+				add 1 to {_slot}
+			format slot 12 of player with lime wool with no nbt named "&aConfirm" with lore "&aConfirm the grant" to run [stop]
+			format slot 14 of player with red wool with no nbt named "&cCancel" with lore "&cCancel the grant" to run [stop]
+			format slot 22 of player with arrow with no nbt named "&7Go back" with lore "&7Go back 1 menu" to run [stop]
+			set {grconfirm.%player%} to true
+			delete {giverank.%player%}
+			set {gp.%player%.BT} to true
+	
+	if {grconfirm.%player%} is set:
+		cancel event
+		if item is lime wool with no nbt named "&aConfirm" with lore "&aConfirm the grant":
+			close player's inventory
+			execute console command "lp user %{gp.%player%}% parent set ""%{grant.%player%.rank}%"""
+			send "&aYou have granted &e%{gp.%player%}% &awith the rank &e%{grant.%player%.rank}%" to sender
+			loop all players:
+				loop-player has permission "staff"
+				send "&8[&7%player%: &eGranted &6%{gp.%player%}% &ewith the rank &6%{grant.%player%.rank}%&8]" to loop-player
+			delete {grant.%player%.rank}
+		if item is red wool with no nbt named "&cCancel" with lore "&cCancel the grant":
+			close player's inventory
+			send "&cCanceled the grant" to player
+		if item is arrow with no nbt named "&7Go back" with lore "&7Go back 1 menu":
+			if {grant.%player%.rank} is "default" or "warrior" or "guard" or "lord" or "Beta Tester":
+				play sound "ui.button.click" with volume 2 and pitch 1 to the player
+				open virtual chest inventory with size 3 named "&6Grant %{gp.%player%}%" to sender
+				set {_slot} to 0
+				loop 9 times:
+					format slot {_slot} of player with gray stained glass pane with no nbt named "&7" to run [stop]
+					add 1 to {_slot}
+				set {_slot} to 18
+				loop 9 times:
+					format slot {_slot} of player with gray stained glass pane with no nbt named "&7" to run [stop]
+					add 1 to {_slot}
+				format slot 9 of player with gray wool with no nbt named "&7Default" with lore "&7Grant %{gp.%player%}% with default rank" to run [stop]
+				format slot 10 of player with pink wool with no nbt named "&dWarrior" with lore "&7Grant %{gp.%player%}% with &dWarrior &7rank" to run [stop]
+				format slot 11 of player with green wool with no nbt named "&2Guard" with lore "&7Grant %{gp.%player%}% with &2Guard &7rank" to run [stop]
+				format slot 12 of player with orange wool with no nbt named "&6Lord" with lore "&7Grant %{gp.%player%}% with &6Lord &7rank" to run [stop]
+				format slot 13 of player with blue wool with no nbt named "&9Beta Tester" with lore "&7Grant %{gp.%player%}% with &9Beta Tester &7rank" to run [stop]
+				format slot 22 of player with arrow with no nbt named "&fGo back" with lore "&7Go back to main menu" to run [stop]
+				set {giverank.%player%} to true 
+				delete {grconfirm.%player%}
+			if {grant.%player%.rank} is "owner" or "manager" or "dev" or "sradmin" or "admin" or "SrMod" or "Mod" or "Helper":
+				play sound "ui.button.click" with volume 2 and pitch 1 to the player
+				open virtual chest inventory with size 3 named "&6Grant %{gp.%player%}%" to sender
+				set {_slot} to 0
+				loop 9 times:
+					format slot {_slot} of player with gray stained glass pane with no nbt named "&7" to run [stop]
+					add 1 to {_slot}
+				set {_slot} to 18
+				loop 9 times:
+					format slot {_slot} of player with gray stained glass pane with no nbt named "&7" to run [stop]
+					add 1 to {_slot}
+				format slot 9 of player with light blue wool with no nbt named "&bHelper" to run [stop]
+				format slot 10 of player with yellow wool with no nbt named "&eMod" to run [stop]
+				format slot 11 of player with yellow wool with no nbt named "&eSr. Mod" to run [stop]
+				format slot 12 of player with red wool with no nbt named "&cAdmin" to run [stop]
+				format slot 13 of player with red wool with no nbt named "&cSr. Admin" to run [stop]
+				format slot 14 of player with lime wool with no nbt named "&aDev" to run [stop]
+				format slot 15 of player with purple wool with no nbt named "&5Manager" to run [stop]
+				format slot 16 of player with white wool with no nbt named "&fOwner" to run [stop]
+				format slot 22 of player with arrow with no nbt named "&fGo back" with lore "&7Go back to main menu" to run [stop]
+				set {giverank.%player%} to true 
+				delete {grconfirm.%player%}
+
+
+
+
+
+
+
+command /grant <player>:
+	permission: staff.grant
+	permission message: &5Manager+
+	aliases: /rebeldupe:grant
+	trigger:
+		set {gp.%player%} to arg 1's name
+		if {grantgui.%player%} is not set:
+			open virtual chest inventory with size 3 named "Grant [LOADING]" to sender
+			wait 1 tick
+		open virtual chest inventory with size 3 named "&6Grant %{gp.%player%}%" to sender
+		set {_slot} to 0
+		loop 9 times:
+			format slot {_slot} of player with gray stained glass pane with no nbt named "&7" to run [stop]
+			add 1 to {_slot}
+		set {_slot} to 18
+		loop 9 times:
+			format slot {_slot} of player with gray stained glass pane with no nbt named "&7" to run [stop]
+			add 1 to {_slot}	
+		format slot 12 of player with light gray terracotta with no nbt named "&7Non-staff" with lore "&7Click to grant %{gp.%player%}% &7with a Non-staff rank." to run [stop]
+		format slot 14 of player with orange terracotta with no nbt named "&6Staff" with lore "&7Click to grant %{gp.%player%}% &7with a &6Staff &7rank." to run [stop]
+		delete {giverank.%player%}
+		set {grantgui.%player%} to true

@@ -1,0 +1,361 @@
+# ------------------------------------------------------------------------------------------------------
+# REBELDUPE SKRIPT
+# > json.sk
+#
+# PLEASE NOTE! SOME OF THE REBELDUPE SCRIPTS **RELY** ON THIS SCRIPT TO WORK, THIS SCRIPT WAS ***NOT*** MADE BY THE DEVELOPERS AT REBELDUPE, BUT RATHER INSTALLED FROM HERE TO USE JSON TEXT (before skript added 'send formatted'): https://www.spigotmc.org/resources/abandoned-json-sk.8851/
+#
+# This is one of the publicly-released scripts from RebelDupe on github.com/CyberedCake/RDScripts. Feel free to use whatever you'd like or use the script in your server altogether to help keep the void dupe genre alive or maybe for your own server ideas!
+#
+# Thank you to the developers who created these: Lynxdeer, TehCheese, Luke, and CyberedCake
+# Thank you to the RebelDupe community for supporting us and making the best possible few years (writing on February 2022) that we could ever ask for. This server has created memories for all and we thank every single one of you out there for it, no matter how big or small of an impact you had.
+# THANK *YOU*!
+#
+# For now, the Discord server will remain alive, which you can join at dsc.gg/rebeldupe
+# If you need any help, you can direct message any of the developers of these scripts:
+#   Lynxdeer  (Lynxdeer#5243    ||  431961511557070868)
+#   Cheese    (TehCheese#1075   ||  493453098199547905)
+#   Luke      (LukeIThink#5106  ||  296823576156307467)
+#   Cyber     (CyberCake#9221   ||  351410272256262145)
+# And if you need help with anything else, you can DM Rebel (the creator and owner of RebelDupe):
+#   Rebel     (Butler#3727      ||  193938515342393345)
+#
+# IMPORTANT SKRIPT NOTE: Some of these scripts rely on certain locations, variables, people, etc. that will need to be adjusted for a server if any developers out there are going to use it for their purposes
+#
+# This text doesn't have to stay, remove it if you wish
+# ------------------------------------------------------------------------------------------------------
+
+
+#json
+#   ---
+#   Version: 2.3
+#   Requires: Skript 2.2
+#   ---
+#
+#   General usage:
+#       
+#   ==> json(<recipient>, <text in json.sk format>, <OPTIONAL: whether or not to convert color codes>) :: returns nothing
+#
+#           This function handles everything you could ever need regarding json.
+#           Everything is automatic with it, you just need to provide the proper json.sk notatation and someone to recieve the message!
+#
+#           --> example #1:
+#               set {_to} to "@a"
+#               set {_msg} to "&6Hello, this is a &ejson message&6!||ttp:&b&oSuper duper cool!||cmd:/msg RezzedUp You rock!!!!"
+#               json({_to}, {_msg})
+#
+#           --> example #2:                        v [NEW]
+#               json("%player%", "&6:D||&5Neat", false)
+#                                                  ^
+#                                                  json.sk won't convert color codes if set to false.
+#                                                  If no value is set, it will convert color codes by default.
+#
+#   ==> jsonFormat(<text in json.sk format>) :: returns text
+#
+#           The purpose of this function is to return the formatted peice of json for your own use.
+#           You can set up your own /tellraw with it
+#
+#           --> example:
+#               set {_toBeJson} to "I will return a json!||ttp:It's true!"
+#               set {_jsonText} to jsonFormat({_toBeJson})
+#               execute console command "/tellraw myUserName %{_jsonText}%"
+#
+
+#
+#   JSON.SK NOTATION:
+#   --> How to create json's!
+#
+#   <always start with normal text>||<3 letter tag>:<text>||<regular text, new json cluster>
+#                                  ^
+#                                 "||" separates each segment.
+#
+#   json.sk notation follows these rules:
+#       1. A cluster of json is formed at each regular text segment.
+#       2. There may be only one hoverable and one clickable event per cluster, otherwise things could get messy.
+#       3. Json effects are defined by a 3 letter tag at the very start of a segment, followed directly by a colon.
+#       4. "||" should only ever be used to separate each json segment.
+#
+#   Json Effect Tags:
+#       ttp:
+#        --> Tooltip, hover event
+#       cmd:
+#        --> Run command, click event
+#       sgt:
+#        --> Suggest command, click event
+#       url:
+#        --> Open url, click event
+#       ins:
+#        --> Adds an "insertion", shift + click event
+#            | For more information about the "insertion" attribute, visit 
+#            | http://www.minecraftforum.net/forums/minecraft-discussion/redstone-discussion-and/351959#insertion
+#
+#   Example json.sk notation:
+#
+#       
+#       "Hello, this is a sample json.||ttp:&bI'm a tooltip for the first cluster.||There's no tag, so I've started a new cluster.||cmd:/ping"
+#        |_______________________________________________________________________|  |_______________________________________________________|
+#                                           |                                                                   |
+#                                   JSON Cluster #1                                                      JSON Cluster #2
+#
+#
+#       The above json.sk notation purely as their segment types:
+#
+#       "<        regular text       >||<ttp:              tooltip               >||<    regular text, starting a new cluster    >||<cmd:/command>"
+
+options:
+    debug: false
+    codes: 0|1|2|3|4|5|6|7|8|9|a|b|c|d|e|f|k|l|m|n|o|r
+    
+#
+#   FUNCTION: Remove all `&` color codes.
+#   -> Usage:
+#             Geneal purpose function to remove color codes.
+#             This function will not remove color codes already converted.
+#
+    
+function removeColor(msg: text) :: text:
+    set {_m::*} to {_msg} split at ""
+    
+    set {_color-codes} to "{@codes}"
+    set {_colors::*} to {_color-codes} split at "|"
+    
+    set {_new} to ""
+    
+    loop {_m::*}:
+        set {_char} to loop-value
+        set {_prev} to the last character of {_new}
+        
+        if {_prev} is "&":
+        
+            loop {_colors::*}:
+            
+                if loop-value-2 is {_char}:
+                    set {_skip} to true
+                
+        if {_skip} is set:
+            delete {_skip}
+            
+        else:
+            set {_new} to "%{_new}%%{_char}%"
+                
+    return {_new}
+
+#
+#   FUNCTION: Replace all `&` color codes with valid JSON color codes.
+#   -> Usage:
+#             Used by json functions to convert color codes.
+#
+    
+function jsonColorize(msg: text, default-color: text = "&r") :: text:
+    set {_m::*} to {_msg} split at ""
+    
+    set {_color-codes} to "{@codes}"
+    set {_colors::*} to {_color-codes} split at "|"
+    
+    set {_color} to colored {_default-color}
+    set {_code} to the first character of {_color}
+    
+    set {_new} to ""
+    set {_skip} to 0
+    
+    loop amount of {_m::*} times:
+    
+        if {_skip} is more than or equal to 1:
+            subtract 1 from {_skip}
+            
+        else:
+            set {_char} to {_m::%loop-number%}
+            set {_next} to {_m::%loop-number + 1%}
+            
+            if {@debug} is true:
+                broadcast "&a[Character Check] &r%loop-number%: &7%{_char}% &r&onext: &8%{_next}% &r[%{_color}%color&r]"
+            
+            if {_char} is "&" or {_code}:
+            
+                if {@debug} is true:
+                    broadcast "&a[Color Check] &rFOUND: &o%{_char}%%{_next}% &7&m<--&7&o is it valid?"
+            
+                loop {_colors::*}:
+                
+                    if loop-value-2 is {_next}:
+                        set {_color} to "%{_color}%%{_code}%%{_next}%"
+                        
+                        if {_next} is "r":
+                            set {_color} to {_default-color}
+                            
+                        set {_new} to "%{_new}%%{_color}%"
+                        set {_skip} to 1
+                        
+                if {_skip} is less than or equal to 0:
+                    set {_new} to "%{_new}%%{_char}%"
+                
+            else if {_char} is " ":
+                set {_new} to "%{_new}% %{_color}%"
+            
+            else:
+                set {_new} to "%{_new}%%{_char}%"
+                
+    return {_new}
+    
+#
+#    FUNCTION: Replace all json-breaking characters.
+#    -> Usage:
+#              Used by json functions to avoid errors.
+#              Allows usage of quotes and back-slashes in your json.
+#
+
+function jsonSanitize(msg: text) :: text:
+    if {@debug} is true:
+        broadcast "&a[Sanitize] &7&oSanitizing input..."
+        
+    set {_m::*} to {_msg} split at ""
+    
+    loop {_m::*}:
+    
+        if loop-value is """":
+            set {_m::%loop-index%} to "\""" # """
+            
+        else if loop-value is "\":
+            set {_m::%loop-index%} to "\\"
+            
+    set {_new} to join {_m::*} with ""
+    return {_new}
+    
+#
+#    FUNCTION: Generate a new /tellraw json object from a json.sk-notation string.
+#    -> Usage:
+#              See the top of this skript, listed under general usage.
+#
+
+function jsonFormat(msg: text, color: boolean = true) :: text:
+    set {_m::*} to {_msg} split at "||"
+    
+    set {_current} to 1
+    
+    loop {_m::*}:
+        if {_clusters::%{_current}%} is not set:
+            set {_clusters::%{_current}%} to ""
+        
+        if {_clusters::%{_current}%::text} is not set:
+            set {_clusters::%{_current}%::text} to jsonSanitize(loop-value)
+            
+        else:
+            set {_tag} to the first 4 characters of loop-value
+            set {_value} to subtext of loop-value from characters 5 to the length of loop-value
+            
+            if {_tag} is "ttp:":
+                set {_clusters::%{_current}%::tooltip} to jsonSanitize({_value})
+                
+            else if {_tag} is "cmd:":
+                set {_clusters::%{_current}%::command} to jsonSanitize({_value})
+                
+            else if {_tag} is "sgt:":
+                set {_clusters::%{_current}%::suggest} to jsonSanitize({_value})
+                
+            else if {_tag} is "url:":
+            
+                if {_value} doesn't contain "http://" or "https://":
+                    set {_value} to "http://%{_value}%"
+                    
+                set {_clusters::%{_current}%::url} to jsonSanitize({_value})
+                
+            else if {_tag} is "ins:":
+                set {_clusters::%{_current}%::insertion} to jsonSanitize({_value})
+                
+            else:
+                add 1 to {_current}
+                set {_clusters::%{_current}%::text} to jsonSanitize(loop-value)
+                set {_clusters::%{_current}%} to ""
+                
+            if {@debug} is true:
+                broadcast "&a[Tag Check] &3cluster:&b%{_current}% &8(&f&o%{_tag}%&8)"
+     
+    loop {_clusters::*}:
+    
+        if {@debug} is true:
+            broadcast "&a[Cluster Check] &7&oCluster ##%loop-index% exists."
+            
+        set {_i} to loop-index
+        
+        set {_text} to {_clusters::%{_i}%::text}
+        
+        if {_color} is true:
+            set {_text} to jsonColorize({_text})
+            
+        if {_json} is not set:
+            set {_json} to "{""text"":""%{_text}%"""
+        else:
+            set {_json} to "%{_json}%,{""text"":""%{_text}%"""
+        
+        if {_clusters::%{_i}%::tooltip} is set:
+        
+            if {_color} is true:
+                set {_tooltip} to jsonColorize({_clusters::%{_i}%::tooltip})
+                
+            else:
+                set {_tooltip} to {_clusters::%{_i}%::tooltip}
+                
+            set {_json} to "%{_json}%,""hoverEvent"":{""action"": ""show_text"",""value"": ""%{_tooltip}%""}"
+        
+        if {_clusters::%{_i}%::insertion} is set:
+            set {_json} to "%{_json}%,""insertion"":""%{_clusters::%{_i}%::insertion}%"",""obfuscated"":false"
+        
+        if {_clusters::%{_i}%::command} is set:
+            set {_clickable} to "%{_json}%,""clickEvent"":{""action"":""run_command"",""value"":""%{_clusters::%{_i}%::command}%""}"
+            
+        if {_clusters::%{_i}%::suggest} is set:
+            set {_clickable} to "%{_json}%,""clickEvent"":{""action"": ""suggest_command"",""value"": ""%{_clusters::%{_i}%::suggest}%""}"
+            
+        if {_clusters::%{_i}%::url} is set:
+            set {_clickable} to "%{_json}%,""clickEvent"":{""action"": ""open_url"",""value"": ""%{_clusters::%{_i}%::url}%""}"
+            
+        if {_clickable} is set:
+            set {_json} to "%{_clickable}%}"
+            delete {_clickable}
+            
+        else:
+            set {_json} to "%{_json}%}"
+    
+    return "{""text"":"""", ""extra"":[%{_json}%]}"
+    
+#
+#    FUNCTION: Send a json message with json.sk-notation.
+#    -> Usage:
+#              See the top of this skript, listed under general usage.
+#
+
+function json(to: text, msg: text, color: boolean = true):
+    set {_msg} to jsonFormat({_msg}, {_color})
+    execute console command "/tellraw %{_to}% %{_msg}%"
+    
+    if {@debug} is true:
+        set {_player} to {_to} parsed as offline player
+        if {_player} is online:
+            send uncolored {_msg} to {_player}
+            
+#
+#    FUNCTION: Broadcast a json message with json.sk-notation.
+#
+
+function jsonBroadcast(msg: text, color: boolean = true):
+    json("@a", {_msg}, {_color})
+        
+#
+#    COMMAND:  A command to show that these json functions really work!
+#    -> Usage:
+#              /json recipient <text in json.sk notation>
+#              It's just a test command, not in best practice to use this instead of the json function.
+#
+ 
+command /json [<text>] [<text>]:
+        permission: "is.op"
+        aliases: /rebeldupe:json
+        trigger:
+                set {_to} to arg 1
+                set {_msg} to arg 2
+ 
+                if arg 1 is not set:
+                        set {_to} to "%player%"
+                if arg 2 is not set:
+                        set {_msg} to "This is a json message! &c&oClick here for no reason!||ttp:&lReally, click your mouse!||cmd:/json @a %{_to}% clicked their mouse on json..."
+ 
+                json({_to}, {_msg})

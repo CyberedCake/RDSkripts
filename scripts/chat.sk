@@ -1,0 +1,196 @@
+# ------------------------------------------------------------------------------------------------------
+# REBELDUPE SKRIPT
+# > chat.sk
+#
+# This is one of the publicly-released scripts from RebelDupe on github.com/CyberedCake/RDScripts. Feel free to use whatever you'd like or use the script in your server altogether to help keep the void dupe genre alive or maybe for your own server ideas!
+#
+# Thank you to the developers who created these: Lynxdeer, TehCheese, Luke, and CyberedCake
+# Thank you to the RebelDupe community for supporting us and making the best possible few years (writing on February 2022) that we could ever ask for. This server has created memories for all and we thank every single one of you out there for it, no matter how big or small of an impact you had.
+# THANK *YOU*!
+#
+# For now, the Discord server will remain alive, which you can join at dsc.gg/rebeldupe
+# If you need any help, you can direct message any of the developers of these scripts:
+#   Lynxdeer  (Lynxdeer#5243    ||  431961511557070868)
+#   Cheese    (TehCheese#1075   ||  493453098199547905)
+#   Luke      (LukeIThink#5106  ||  296823576156307467)
+#   Cyber     (CyberCake#9221   ||  351410272256262145)
+# And if you need help with anything else, you can DM Rebel (the creator and owner of RebelDupe):
+#   Rebel     (Butler#3727      ||  193938515342393345)
+#
+# IMPORTANT SKRIPT NOTE: Some of these scripts rely on certain locations, variables, people, etc. that will need to be adjusted for a server if any developers out there are going to use it for their purposes
+#
+# This text doesn't have to stay, remove it if you wish
+# ------------------------------------------------------------------------------------------------------
+
+#
+#      Blade chat
+#
+
+options:
+	ver: Alpha 1.0
+	
+#settings
+#Commands (On or off)
+#Put "true" or "false" make sure there are no caps
+	ClearChat: true
+	MuteChat: true
+	
+	
+#Messages
+#"(prefix)" is the Prefix option
+#"%nl%" makes a new line as used in this
+#"»" Is a cool arrow that you cab use in the minectaft chat!
+	Prefix: &cChat
+	Disabled-Message: &cCommand disabled
+	Clear-Chat-Message: &e» &c%executor% &7has cleared the chat
+	Mute-Chat-Message: &e» &c%executor% &7has &cmuted &7the chat
+	Clear-Chat-Message-Bypass: &e» &c%executor% &7has cleared &7the chat, but you bypass it.
+	Unmute-Chat-Message: &e» &c%executor% &7has &aunmuted &7the chat
+	Mute-chat_Chatmuted-Message: &cChat is currently muted!
+	
+#RebelDupeOnly
+	c: {chatcolor.%player%}
+	
+	
+#permissions:
+	ClearChat-Permission: Blade.ClearChat.use
+	ClearChat-Permission-Bypass: Blade.ClearChat.bypass
+	Mutechat-Permission: Blade.Mutechat.use
+	Mutechat-Permission-Bypass: Blade.Mutechat.bypass
+	ClearChat-NoPermissionMessage: &cYou are not allowed to use this command
+	Mutechat-NoPermissionMessage: &cYou are not allowed to use this command
+
+
+
+	
+#DON'T EDIT ANYTHING BELOW UNLESS YOU KNOW WHAT YOU ARE DOING!
+
+command /chatinfo:
+	aliases: /rebeldupe:chatinfo
+	trigger:
+		send "&7-----&c{@Prefix}&7-----"
+		send "&6Version: &9{@ver}"
+		send "&6Made by: &9Lukepad"
+
+
+
+command clearchat:
+	aliases: /clc, /rebeldupe:clearchat, /rebeldupe:clc
+	permission: {@ClearChat-Permission}
+	permission message: {@ClearChat-NoPermissionMessage}
+	trigger:
+		if {@ClearChat} is true:
+			loop 100 times:
+				send "&7" to all players where [input does not have permission "{@ClearChat-Permission-Bypass}"]
+			send "{@Clear-Chat-Message}" to all players where [input does not have permission "{@ClearChat-Permission-Bypass}"]
+			send "{@Clear-Chat-Message-Bypass}" to all players where [input has permission "{@ClearChat-Permission-Bypass}"]
+			stop
+		if {@ClearChat} is false:
+			send "{@Disabled-Message}"
+			stop
+command mutechat:
+	aliases: /rebeldupe:mutechat
+	permission: {@Mutechat-Permission}
+	permission message: {@Mutechat-NoPermissionMessage}
+	trigger:
+		if {@MuteChat} is true:
+			if {talk} is not set:
+				set {talk} to false
+				send "{@Mute-Chat-Message}" to all players
+				stop
+			if {talk} is true:
+				set {talk} to false
+				send "{@Mute-Chat-Message}" to all players
+				stop
+			if {talk} is false:
+				set {talk} to true
+				send "{@Unmute-Chat-Message}" to all players
+				stop
+		if {@MuteChat} is false:
+			send "{@Disabled-Message}"
+			stop
+chat:
+	if {ban.customreason.%player%} is true:
+		if message is "cancel":
+			cancel event
+			if {ban.gui.%player%} is not set:
+				open virtual chest with 6 rows named "Ban %{ban.%player%}% [LOADING]" to sender
+				send title "&b" with subtitle "&b" to player
+				send "&cCancelled custom reason"
+				wait 1 tick
+			open virtual chest with 6 rows named "Ban %{ban.%player%}%" to sender
+			send title "&b" with subtitle "&b" to player
+			resetBan(player)
+			delete {ban.customreason.%player%}
+			stop
+		cancel event
+		set {banreason.%player%} to "%message%"
+		send "&aSelected reason &6%message%"
+		send title "&b" with subtitle "&b" to player
+		open virtual chest with 6 rows named "Ban %{ban.%player%}%" to sender
+		send title "&b" with subtitle "&b" to player
+		resetBan(player)
+		delete {ban.customreason.%player%}
+		stop
+	if {chatcolor::%player%} is not set:
+		if player has permission "color.chat":
+			set {chatcolor::%player%} to "&f"
+		if player does not have permission "color.chat":
+			set {chatcolor::%player%} to "&7"
+	if {channel::%player's uuid%} is "STAFF":
+		cancel event
+		make player execute command "sc %message%"
+		stop
+	if {talk} is false:
+		player does not have permission "{@Mutechat-Permission-Bypass}"
+		cancel event
+		send "{@Mute-chat_Chatmuted-Message}"
+		stop
+	if {talk} is true:
+		player has permission "not.default":
+			set chat format to "%player's display name%&f: &r%{chatcolor::%player%}%%message%"
+		player does not have permission "not.default":
+			set chat format to "%player's display name%&7: %{chatcolor::%player%}%%message%"
+	   
+command /color [<text>]:
+	aliases: /col, /rebeldupe:color, /rebeldupe:col
+	permission: color.chat
+	permission message: &cNo permission!
+	trigger:
+		if arg 1 is "Bold" or "Italics" or "Underline" or "Strike" or "Magic":
+			player does not have permission "rank.lord":
+				send "&cNo permission for this color!"
+				stop
+		if arg-1 is not set:
+			send "&9&lColors &6/color &0Black, &1Blue, &2DarkGreen, &3DarkAqua, &4DarkRed, &5DarkPurple, &6Gold, &7Gray, &8DarkGray, &9Blue, &aGreen, &bAqua, &cRed, &dLightPurple, &eYellow, &fWhite, &lBold&r, &oItalic&r, &nUnderline&r, &mStrike&r, &kMagic &r(Magic)" to player
+			stop
+		set {_check} to "%{chatcolor::%player%}%"
+		set {chatcolor::%player%} to "" if arg-1 is "Clear", "Reset" or "Default"
+		set {chatcolor::%player%} to "&0" if arg-1 is "Black" or "&0"
+		set {chatcolor::%player%} to "&1" if arg-1 is "DarkBlue" or "&1"
+		set {chatcolor::%player%} to "&2" if arg-1 is "DarkGreen" or "&2"
+		set {chatcolor::%player%} to "&3" if arg-1 is "DarkAqua" or "&3"
+		set {chatcolor::%player%} to "&4" if arg-1 is "DarkRed" or "&4"
+		set {chatcolor::%player%} to "&5" if arg-1 is "DarkPurple" or "&5"
+		set {chatcolor::%player%} to "&6" if arg-1 is "Gold" or "&6"
+		set {chatcolor::%player%} to "&7" if arg-1 is "Gray" or "&7"
+		set {chatcolor::%player%} to "&8" if arg-1 is "DarkGray" or "&8"
+		set {chatcolor::%player%} to "&9" if arg-1 is "Blue" or "&9"
+		set {chatcolor::%player%} to "&a" if arg-1 is "Green" or "&a"
+		set {chatcolor::%player%} to "&b" if arg-1 is "Aqua" or "&b"
+		set {chatcolor::%player%} to "&c" if arg-1 is "Red" or "&c"
+		set {chatcolor::%player%} to "&d" if arg-1 is "LightPurple" or "&d"
+		set {chatcolor::%player%} to "&e" if arg-1 is "Yellow" or "&e"
+		set {chatcolor::%player%} to "&f" if arg-1 is "White" or "&f"
+		set {chatcolor::%player%} to "%{chatcolor::%player%}%&l" if arg-1 is "Bold" or "&b"
+		set {chatcolor::%player%} to "%{chatcolor::%player%}%&o" if arg-1 is "Italics" or "&o"
+		set {chatcolor::%player%} to "%{chatcolor::%player%}%&n" if arg-1 is "Underline" or "&n"
+		set {chatcolor::%player%} to "%{chatcolor::%player%}%&m" if arg-1 is "Strike" or "&m"
+		set {chatcolor::%player%} to "%{chatcolor::%player%}%&k" if arg-1 is "Magic" or "&k"
+		replace all "&l" in {chatcolor::%player%} with "" if {chatcolor::%player%} contains "&l&l"
+		replace all "&o" in {chatcolor::%player%} with "" if {chatcolor::%player%} contains "&o&o"
+		replace all "&n" in {chatcolor::%player%} with "" if {chatcolor::%player%} contains "&n&n"
+		replace all "&m" in {chatcolor::%player%} with "" if {chatcolor::%player%} contains "&m&m"
+		replace all "&k" in {chatcolor::%player%} with "" if {chatcolor::%player%} contains "&k&k"
+		send "&9&lColor &asuccesfully &9&lchanged!" to player if {_check} is not "%{chatcolor::%player%}%"
+		send "&4&lError. &cInvalid color!" to player if {_check} is "%{chatcolor::%player%}%"

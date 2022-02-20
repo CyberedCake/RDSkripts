@@ -1,0 +1,169 @@
+# ------------------------------------------------------------------------------------------------------
+# REBELDUPE SKRIPT
+# > tpa.sk
+#
+# This is one of the publicly-released scripts from RebelDupe on github.com/CyberedCake/RDScripts. Feel free to use whatever you'd like or use the script in your server altogether to help keep the void dupe genre alive or maybe for your own server ideas!
+#
+# Thank you to the developers who created these: Lynxdeer, TehCheese, Luke, and CyberedCake
+# Thank you to the RebelDupe community for supporting us and making the best possible few years (writing on February 2022) that we could ever ask for. This server has created memories for all and we thank every single one of you out there for it, no matter how big or small of an impact you had.
+# THANK *YOU*!
+#
+# For now, the Discord server will remain alive, which you can join at dsc.gg/rebeldupe
+# If you need any help, you can direct message any of the developers of these scripts:
+#   Lynxdeer  (Lynxdeer#5243    ||  431961511557070868)
+#   Cheese    (TehCheese#1075   ||  493453098199547905)
+#   Luke      (LukeIThink#5106  ||  296823576156307467)
+#   Cyber     (CyberCake#9221   ||  351410272256262145)
+# And if you need help with anything else, you can DM Rebel (the creator and owner of RebelDupe):
+#   Rebel     (Butler#3727      ||  193938515342393345)
+#
+# IMPORTANT SKRIPT NOTE: Some of these scripts rely on certain locations, variables, people, etc. that will need to be adjusted for a server if any developers out there are going to use it for their purposes
+#
+# This text doesn't have to stay, remove it if you wish
+# ------------------------------------------------------------------------------------------------------
+
+command /tpa <offlineplayer>:
+	aliases: /rebeldupe:tpa
+	usage: &cInvalid usage! &7/tpa <player>
+	trigger:
+		if {request.%player%} is arg 1:
+			send "&8&l&m-------------------------------------"
+			send "&cYou already sent a teleport request to %arg 1%"
+			send "&8&l&m-------------------------------------"
+			stop
+		if {request.%player%} is set:
+			send "&8&l&m-------------------------------------"
+			send "&cYou can only have one active teleport request! Upgrade your rank to send multiple!"
+			send "&8&l&m-------------------------------------"
+			stop
+		if player is arg-1:
+			send "&8&l&m-------------------------------------"
+			send "&cYou cannot send teleport request to yourself!"
+			send "&8&l&m-------------------------------------"
+			stop
+		if {teleportrequest.%arg 1%} is false:
+			send "&8&l&m-------------------------------------"
+			send "&cYou cannot send teleport request to that player because they have them disabled!"
+			send "&8&l&m-------------------------------------"
+			stop
+		if {vanish::%arg 1's uuid%} is true:
+			send "&8&l&m-------------------------------------"
+			send "&cYou cannot send a teleport request to that player because that player is offline!"
+			send "&8&l&m-------------------------------------"
+			stop	
+		if arg 1 is offline:
+			send "&8&l&m-------------------------------------"
+			send "&cYou cannot send a teleport request to that player because that player is offline!"
+			send "&8&l&m-------------------------------------"
+			stop
+		send "&8&l&m-------------------------------------"
+		send "&aYou sent a teleport request to &a%arg 1's display name%&a! They have 30 seconds to accept it!"
+		send "&8&l&m-------------------------------------"
+		send "&8&l&m-------------------------------------" to arg 1
+		json("%arg 1%", "&a%player's display name% &asent you a teleport request!")
+		json("%arg 1%", "||||&a&l[ACCEPT]||ttp:&bAccept %player's display name%&b's teleport request!||cmd:/tpaccept %player%|||| &8- ||||&c&l[DENY]||ttp:&bDeny %player's display name%&b's teleport request!||cmd:/tpdeny %player%")
+		send "&8&l&m-------------------------------------" to arg 1
+		set {request.%player%} to arg 1
+		loop 30 times:
+			if {request.%player%} is not arg 1:
+				stop
+			wait 1 second
+		send "&8&l&m-------------------------------------"
+		send "&eYour teleport request to %arg 1% &eexpired!"
+		send "&8&l&m-------------------------------------"
+		send "&8&l&m-------------------------------------" to arg 1
+		send "&eThe teleport request from %player% &eexpired!" to arg 1
+		send "&8&l&m-------------------------------------" to arg 1
+		delete {request.%player%}
+
+command /tpaccept <offlineplayer>:
+	aliases: /rebeldupe:tpaccept
+	usage: &cInvalid usage! &7/tpaccept <player>
+	trigger:
+		if {request.%arg 1%} is not set:
+			send "&8&l&m-------------------------------------"
+			send "&cYou do not have any pending teleport request from %arg 1%"
+			send "&8&l&m-------------------------------------"
+			stop
+		if arg 1 is offline:
+			send "&8&l&m-------------------------------------"
+			send "&cYou cannot accept that teleport request because that player is no longer online!"
+			send "&8&l&m-------------------------------------"
+			stop
+		if player is arg-1:
+			send "&8&l&m-------------------------------------"
+			send "&cYou cannot accept teleport request from yourself!"
+			send "&8&l&m-------------------------------------"
+			stop
+		send "&8&l&m-------------------------------------"
+		send "&aYou accepted %arg 1's display name%&a's &ateleport request!"
+		send "&8&l&m-------------------------------------"
+		send "&8&l&m-------------------------------------" to arg 1
+		send "&a%player's display name% &aaccepted your teleport request!" to arg 1
+		send "&8&l&m-------------------------------------" to arg 1
+		teleport arg-1 to player
+		play sound "entity.enderman.teleport" with volume 1 and pitch 1 to the player
+		play sound "entity.enderman.teleport" with volume 1 and pitch 1 to the arg-1
+		delete {request.%arg 1%}
+
+command /tpdeny <offlineplayer>:
+	aliases: /rebeldupe:tpdeny
+	usage: &cInvalid usage! &7/tpdeny <player>
+	trigger:
+		if {request.%arg 1%} is not set:
+			send "&8&l&m-------------------------------------"
+			send "&cYou do not have any pending teleport request from %arg 1%"
+			send "&8&l&m-------------------------------------"
+			stop
+		if arg 1 is offline:
+			send "&8&l&m-------------------------------------"
+			send "&cYou cannot deny that teleport request because that player is no longer online!"
+			send "&8&l&m-------------------------------------"
+			stop
+		if player is arg-1:
+			send "&8&l&m-------------------------------------"
+			send "&cYou cannot deny teleport request from yourself!"
+			send "&8&l&m-------------------------------------"
+			stop
+		send "&8&l&m-------------------------------------"
+		send "&cYou denied &6%arg 1's display name%&c's &cteleport request!"
+		send "&8&l&m-------------------------------------"
+		send "&8&l&m-------------------------------------" to arg 1
+		send "&c%player's display name% &cdenied your teleport request!" to arg 1
+		send "&8&l&m-------------------------------------" to arg 1
+		delete {request.%arg 1%}
+
+command /tptoggle:
+	aliases: /rebeldupe:tptoggle
+	usage: &cInvalid usage! &7/tptoggle
+	trigger:
+		if {teleportrequest.%player%} is not set:
+			send "&8&l&m-------------------------------------"
+			send "&c&lYou disabled teleport requests!"
+			send "&7&oPlayers can no longer /tpa to you."
+			send "&8&l&m-------------------------------------"
+			set {teleportrequest.%player%} to false
+			stop
+		if {teleportrequest.%player%} is false:
+			send "&8&l&m-------------------------------------"
+			send "&a&lYou enabled teleport requests!"
+			send "&7&oPlayers can now /tpa to you."
+			send "&8&l&m-------------------------------------"
+			delete {teleportrequest.%player%}
+			stop
+		else:
+			send "&cAn internal error occurred whilst attempting to perform this command!"
+
+command /tphelp:
+	aliases: /rebeldupe:tphelp
+	usage: &cInvalid usage! &7/tphelp
+	trigger:
+		send "&b"
+		send "&6&lTELEPORT REQUEST HELP:"
+		send "&b/tpa <player> &f- &eSend a teleport request to a player. They have 30 seconds to accept it!"
+		send "&b/tpaccept <player> &f- &eAccept a teleport request!"
+		send "&b/tpdeny <player> &f- &eDeny a teleport request!"
+		send "&b/tptoggle &f- &eToggles other players being able to teleport to you!"
+		send "&b/tphelp &f- &ePrint this help screen!"
+		send "&b"
+		stop

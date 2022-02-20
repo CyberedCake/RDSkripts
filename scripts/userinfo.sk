@@ -1,0 +1,73 @@
+# ------------------------------------------------------------------------------------------------------
+# REBELDUPE SKRIPT
+# > userinfo.sk
+#
+# This is one of the publicly-released scripts from RebelDupe on github.com/CyberedCake/RDScripts. Feel free to use whatever you'd like or use the script in your server altogether to help keep the void dupe genre alive or maybe for your own server ideas!
+#
+# Thank you to the developers who created these: Lynxdeer, TehCheese, Luke, and CyberedCake
+# Thank you to the RebelDupe community for supporting us and making the best possible few years (writing on February 2022) that we could ever ask for. This server has created memories for all and we thank every single one of you out there for it, no matter how big or small of an impact you had.
+# THANK *YOU*!
+#
+# For now, the Discord server will remain alive, which you can join at dsc.gg/rebeldupe
+# If you need any help, you can direct message any of the developers of these scripts:
+#   Lynxdeer  (Lynxdeer#5243    ||  431961511557070868)
+#   Cheese    (TehCheese#1075   ||  493453098199547905)
+#   Luke      (LukeIThink#5106  ||  296823576156307467)
+#   Cyber     (CyberCake#9221   ||  351410272256262145)
+# And if you need help with anything else, you can DM Rebel (the creator and owner of RebelDupe):
+#   Rebel     (Butler#3727      ||  193938515342393345)
+#
+# IMPORTANT SKRIPT NOTE: Some of these scripts rely on certain locations, variables, people, etc. that will need to be adjusted for a server if any developers out there are going to use it for their purposes
+#
+# This text doesn't have to stay, remove it if you wish
+# ------------------------------------------------------------------------------------------------------
+
+command /info <offlineplayer>:
+	usage: &cInvalid usage! &7/userinfo <player>
+	permission: staff.userinfo
+	permission message: &cYou do not have permission to execute this command!
+	aliases: /ui, /userinfo, /rebeldupe:userinfo, /rebeldupe:ui, /rebeldupe:info
+	trigger:
+		if {joined::%arg 1's uuid%} is not set:
+			send "&cYou cannot view stats for a player who has never logged in!"
+			stop
+		set {_firstlogin} to {joineddate::%arg 1's uuid%}
+		set {_lastlogin} to {lastlogin::%arg 1's uuid%}
+		set {_lastlogin} to 4 hours ago
+		if {online.%arg 1%} is not set:
+			set {_online} to "&c&l[OFFLINE]"
+		if {online.%arg 1%} is true:
+			set {_online} to "&a&l[ONLINE]"
+		send "&b"
+		send "&eUsername: &f%arg 1% &f%{_online}%"
+		if {online.%arg 1%} is true:
+			send "&eDisplay Name: &f%arg 1's display name%"
+			send "&eRank: &f%arg 1's prefix%"
+		if {online.%arg 1%} is not set:
+			send "&eDisplay Name: &f%{dispname.%arg 1%}%"
+			send "&eRank: &f%{rank.%arg 1%}%"
+		if {online.%arg 1%} is true:
+			json("%player%", "&eIP: &fHover for IP||ttp:&bIP of &e%arg 1%&b: &e%ip of arg-1%")
+		if {online.%arg 1%} is not set:
+			json("%player%", "&eIP: &fHover for last known IP||ttp:&bLast known IP of &e%arg 1%&b: &e%{lastknownip.%arg 1%}%")
+		send "&eFirst Login: &f%{_firstlogin}% &7(##%{joined::%arg 1's uuid%}%&7)"
+		send "&eLast Login: &f%{_lastlogin}%"
+		send "&eBalance: &f%arg 1's balance%"
+		if {online.%arg 1%} is not set:
+			json("%player%", "&eActions: ||||&b&l[WARN]||sgt:/warn %arg 1% <reason>||ttp:&bClick to warn %arg 1%|||| ||||&b&l[BAN]||sgt:/ban %arg 1% <reason>||ttp:&bClick to ban %arg 1%|||| ||||&b&l[MUTE]||ttp:&bClick to mute %arg 1%||sgt:/mute %arg 1% <reason>|||| ||||&b&l[IP BAN]||ttp:&bClick to IP ban %arg 1%||sgt:/ipban %arg 1% <reason>||||")
+		if {online.%arg 1%} is true:
+			json("%player%", "&eActions: ||||&b&l[TP]||ttp:&bClick to teleport to &b%arg 1%||cmd:/sctp %arg 1%|||| ||||&b&l[KICK]||ttp:&bClick to kick %arg 1%||sgt:/kick %arg 1% <reason>|||| ||||&b&l[WARN]||sgt:/warn %arg 1% <reason>||ttp:&bClick to warn %arg 1%|||| ||||&b&l[BAN]||sgt:/ban %arg 1% <reason>||ttp:&bClick to ban %arg 1%|||| ||||&b&l[MUTE]||ttp:&bClick to mute %arg 1%||sgt:/mute %arg 1% <reason>|||| ||||&b&l[IP BAN]||ttp:&bClick to IP ban %arg 1%||sgt:/ipban %arg 1% <reason>||||")
+		json("%player%", "&ePlayer Information: ||||&b&lCLICK HERE||ttp:&bClick to run the command &7/playerinfo %arg 1%||cmd:/playerinfo %arg 1%|||| &fto see logins, chat logs, command logs, and more!")
+		send "&b"
+
+on join:
+	set {lastlogin::%player's uuid%} to now formatted as "MM/dd/yyyy h:mm:ss aa"
+	while player is online:
+		wait 1 second
+		set {lastlogin::%player's uuid%} to now formatted as "MM/dd/yyyy h:mm:ss aa"
+
+on quit:
+	set {lastlogin::%player's uuid%} to now formatted as "MM/dd/yyyy h:mm:ss aa"
+	set {dispname.%player%} to display name of player
+	set {rank.%player%} to player's prefix
+	set {lastknownip.%player%} to ip of player

@@ -1,0 +1,76 @@
+# ------------------------------------------------------------------------------------------------------
+# REBELDUPE SKRIPT
+# > warns.sk
+#
+# This is one of the publicly-released scripts from RebelDupe on github.com/CyberedCake/RDScripts. Feel free to use whatever you'd like or use the script in your server altogether to help keep the void dupe genre alive or maybe for your own server ideas!
+#
+# Thank you to the developers who created these: Lynxdeer, TehCheese, Luke, and CyberedCake
+# Thank you to the RebelDupe community for supporting us and making the best possible few years (writing on February 2022) that we could ever ask for. This server has created memories for all and we thank every single one of you out there for it, no matter how big or small of an impact you had.
+# THANK *YOU*!
+#
+# For now, the Discord server will remain alive, which you can join at dsc.gg/rebeldupe
+# If you need any help, you can direct message any of the developers of these scripts:
+#   Lynxdeer  (Lynxdeer#5243    ||  431961511557070868)
+#   Cheese    (TehCheese#1075   ||  493453098199547905)
+#   Luke      (LukeIThink#5106  ||  296823576156307467)
+#   Cyber     (CyberCake#9221   ||  351410272256262145)
+# And if you need help with anything else, you can DM Rebel (the creator and owner of RebelDupe):
+#   Rebel     (Butler#3727      ||  193938515342393345)
+#
+# IMPORTANT SKRIPT NOTE: Some of these scripts rely on certain locations, variables, people, etc. that will need to be adjusted for a server if any developers out there are going to use it for their purposes
+#
+# This text doesn't have to stay, remove it if you wish
+# ------------------------------------------------------------------------------------------------------
+
+on inventory close:
+	delete {warn.gui.%player%}
+
+on join:
+	delete {warn.gui.%player%}
+
+on inventory click:
+	if {warn.gui.%player%} is true:
+		cancel event
+
+
+command /warnt <offlineplayer> [<text>]:
+	usage: &cInvalid usage! &7/warn <player>
+	permission: maxbans.warn
+	permission message: &cYou do not have permission to execute this command!
+	aliases: /rebeldupe:warn
+	trigger:
+		if arg 2 is set:
+			send "&cInvalid usage! &7/warn <player>"
+			stop
+		if {joined::%arg 1's uuid%} is not set:
+			send "&cThat player has never joined the server before!"
+			stop
+		send "&aOpening a warn against %arg 1%"
+		if {warn.gui.%player%} is not set:
+			open virtual chest with 6 rows named "Warn %arg 1% [LOADING]" to sender
+			wait 1 tick
+		set {warn.%player%} to arg-1
+		set {warn.gui.%player%} to true
+		set {silent.%player%} to true
+		open virtual chest with 6 rows named "Warn %arg 1%" to sender
+		set {warnreason.%player%} to "Mob Spam"
+		resetWarn(player)
+
+function resetWarn(p: player):
+	play sound "ui.button.click" with volume 1000 and pitch 1 to {_p}
+	open virtual chest with 6 rows named "Warn %{warn.%{_p}%}%" to {_p}
+	format slot 18 of {_p} with cyan stained glass pane named "&aReason: &fCheating" to run [stop]
+	format slot 39 of {_p} with red stained glass pane named "&aSilent" to run [stop]
+	format slot 41 of {_p} with red stained glass pane named "&aPublic" to run [stop]
+	if {silent.%{_p}%} is true:
+		format slot 53 of {_p} with emerald block named "&a&lCONFIRM" with lore "&6Ban: &f%{ban.%{_p}%}%", "&6Duration: &f%{bantime.%{_p}%}% &fdays", "&6Reason: &f%{banreason.%{_p}%}%", "&6Silent? &fYes", "&7" and "&eClick to ban %{ban.%{_p}%}%" to run [stop]
+	if {silent.%{_p}%} is false:
+		format slot 53 of {_p} with emerald block named "&a&lCONFIRM" with lore "&6Ban: &f%{ban.%{_p}%}%", "&6Duration: &f%{bantime.%{_p}%}% &fdays", "&6Reason: &f%{banreason.%{_p}%}%", "&6Silent? &fNo", "&7" and "&eClick to ban %{ban.%{_p}%}%" to run [stop]
+	format slot 45 of {_p} with redstone block named "&c&lCANCEL" with lore "&fCancel warn against %{warn.%{_p}%}%", "&7" and "&eClick to cancel warn against %{warn.%{_p}%}%" to run [stop]
+	if {banreason.%{_p}%} is "Cheating":
+		format slot 18 of {_p} with lime stained glass pane of protection with no nbt named "&aReason: &fCheating" with lore "&cSelected" to run [stop]
+	if {silent.%{_p}%} is true:
+		format slot 39 of {_p} with lime stained glass pane of protection with no nbt named "&aSilent" with lore "&cSelected" to run [stop]
+	if {silent.%{_p}%} is false:
+		format slot 41 of {_p} with lime stained glass pane of protection with no nbt named "&aPublic" with lore "&cSelected" to run [stop]
+	set {warn.gui.%{_p}%} to true

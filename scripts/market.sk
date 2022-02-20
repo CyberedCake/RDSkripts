@@ -1,0 +1,96 @@
+# ------------------------------------------------------------------------------------------------------
+# REBELDUPE SKRIPT
+# > market.sk
+#
+# This is one of the publicly-released scripts from RebelDupe on github.com/CyberedCake/RDScripts. Feel free to use whatever you'd like or use the script in your server altogether to help keep the void dupe genre alive or maybe for your own server ideas!
+#
+# Thank you to the developers who created these: Lynxdeer, TehCheese, Luke, and CyberedCake
+# Thank you to the RebelDupe community for supporting us and making the best possible few years (writing on February 2022) that we could ever ask for. This server has created memories for all and we thank every single one of you out there for it, no matter how big or small of an impact you had.
+# THANK *YOU*!
+#
+# For now, the Discord server will remain alive, which you can join at dsc.gg/rebeldupe
+# If you need any help, you can direct message any of the developers of these scripts:
+#   Lynxdeer  (Lynxdeer#5243    ||  431961511557070868)
+#   Cheese    (TehCheese#1075   ||  493453098199547905)
+#   Luke      (LukeIThink#5106  ||  296823576156307467)
+#   Cyber     (CyberCake#9221   ||  351410272256262145)
+# And if you need help with anything else, you can DM Rebel (the creator and owner of RebelDupe):
+#   Rebel     (Butler#3727      ||  193938515342393345)
+#
+# IMPORTANT SKRIPT NOTE: Some of these scripts rely on certain locations, variables, people, etc. that will need to be adjusted for a server if any developers out there are going to use it for their purposes
+#
+# This text doesn't have to stay, remove it if you wish
+# ------------------------------------------------------------------------------------------------------
+
+on inventory close:
+	delete {market.gui.%player%}
+
+on quit:
+	delete {market.gui.%player%}
+
+function createshop(p: player):
+	play sound "ui.button.click" with volume 100 and pitch 1 to {_p}
+	open virtual chest with 3 rows named "Market > Buy" to {_p}
+	fillGUI({_p}, 3, gray stained glass pane)
+	if {_p}'s balance >= 250:
+		format slot 11 of {_p} with emerald block named "&aBudget Plot" with lore "&7Buy a budget plot", "&7", "&aCost: &f$250/d", "&aSize: &f4x4", "&e" and "&eClick to buy!" to run [stop]
+	if {_p}'s balance < 250:
+		format slot 11 of {_p} with redstone block named "&cBudget Plot" with lore "&7Buy a budget plot", "&7", "&aCost: &f$250/d", "&aSize: &f4x4", "&e" and "&cYou do not have enough money!" to run [stop]
+	if {_p}'s balance >= 500:
+		format slot 12 of {_p} with emerald block named "&aLower Class Plot" with lore "&7Buy a lower class plot", "&7", "&aCost: &f$500/d", "&aSize: &f10x10", "&e" and "&eClick to buy!" to run [stop]
+	if {_p}'s balance < 500:
+		format slot 12 of {_p} with redstone block named "&cLower Class Plot" with lore "&7Buy a lower class plot", "&7", "&aCost: &f$500/d", "&aSize: &f10x10", "&e" and "&cYou do not have enough money!" to run [stop]
+	if {_p}'s balance >= 1000:
+		format slot 14 of {_p} with emerald block named "&aMiddle Class Plot" with lore "&7Buy a middle class plot", "&7", "&aCost: &f$1,000/d", "&aSize: &f20x10", "&e" and "&eClick to buy!" to run [stop]
+	if {_p}'s balance < 1000:
+		format slot 14 of {_p} with redstone block named "&cMiddle Class Plot" with lore "&7Buy a middle class plot", "&7", "&aCost: &f$1,000/d", "&aSize: &f20x10", "&e" and "&cYou do not have enough money!" to run [stop]
+	if {_p}'s balance >= 2000:
+		format slot 15 of {_p} with emerald block named "&aUpper Class Plot" with lore "&7Buy an upper class plot", "&7", "&aCost: &f$2,000/d", "&aSize: &f21x16", "&e" and "&eClick to buy!" to run [stop]
+	if {_p}'s balance < 2000:
+		format slot 15 of {_p} with redstone block named "&cUpper Class Plot" with lore "&7Buy an upper class plot", "&7", "&aCost: &f$2,000/d", "&aSize: &f21x16", "&e" and "&cYou do not have enough money!" to run [stop]
+	format slot 22 of {_p} with arrow named "&fGo Back" with lore "&7To Market" to run [stop]
+	set {market.gui.%{_p}%} to true
+
+on inventory click:
+	if {market.gui.%player%} is true:
+		cancel event
+		if item is arrow named "&fGo Back" with lore "&7To Market":
+			play sound "ui.button.click" with volume 100 and pitch 1 to the player
+			make player execute command "market buy"
+			stop
+		if item is arrow named "&fGo Back" with lore "&7To Market Buy":
+			createshop(player)
+		if item is emerald named "&aCreate Shop" with lore "&7Click to create a shop in the market!", "&7", "&6Budget Plot: &f$250/d", "&6Lower Class Plot: &f$500/d", "&6Middle Class Plot: &f$1,000/d", "&6Upper Class Plot: &f$2,000/d", "&e" and "&eClick to create!":
+			createshop(player)
+		if item is emerald block named "&aBudget Plot" with lore "&7Buy a budget plot", "&7", "&aCost: &f$250/d", "&aSize: &f4x4", "&e" and "&eClick to buy!":
+			play sound "ui.button.click" with volume 100 and pitch 1 to the player
+			open virtual chest with 3 rows named "Market > Buy > Budget Plot" to sender
+			fillGUI(player, 3, gray stained glass pane)
+			format slot 22 of player with arrow named "&fGo Back" with lore "&7To Market Buy" to run [stop]
+			set {market.gui.%player%} to true
+
+on right click:
+	if item is paper named "&aMarket Buy":
+		cancel event
+		make player execute command "market buy"
+
+command /market [<text>]:
+	usage: &cInvalid usage! &7/market
+	aliases: /rebeldupe:market
+	trigger:
+		if arg 1 is not set:
+			make player execute command "warp market"
+			stop
+		if arg 1 is "buy":
+			if {market.gui.%player%} is not set:
+				open virtual chest with 3 rows named "Market [LOADING]" to sender
+				wait 1 tick
+			open virtual chest with 3 rows named "Market" to sender
+			if player's balance >= 250:
+				fillGUI(player, 3, lime stained glass pane)
+				format slot 13 of player with emerald named "&aCreate Shop" with lore "&7Click to create a shop in the market!", "&7", "&6Budget Plot: &f$250/d", "&6Lower Class Plot: &f$500/d", "&6Middle Class Plot: &f$1,000/d", "&6Upper Class Plot: &f$2,000/d", "&e" and "&eClick to create!" to run [stop]
+			if player's balance < 250:
+				fillGUI(player, 3, red stained glass pane)
+				format slot 13 of player with emerald named "&cCreate Shop" with lore "&7Click to create a shop in the market!", "&7", "&6Budget Plot: &f$250/d", "&6Lower Class Plot: &f$500/d", "&6Middle Class Plot: &f$1,000/d", "&6Upper Class Plot: &f$2,000/d", "&e" and "&cYou do not have enough money!" to run [stop]
+			format slot 22 of player with paper named "&aYour Balance: &6%player's balance%" to run [stop]
+			set {market.gui.%player%} to true

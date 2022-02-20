@@ -1,0 +1,138 @@
+# ------------------------------------------------------------------------------------------------------
+# REBELDUPE SKRIPT
+# > uhc.sk
+#
+# This is one of the publicly-released scripts from RebelDupe on github.com/CyberedCake/RDScripts. Feel free to use whatever you'd like or use the script in your server altogether to help keep the void dupe genre alive or maybe for your own server ideas!
+#
+# Thank you to the developers who created these: Lynxdeer, TehCheese, Luke, and CyberedCake
+# Thank you to the RebelDupe community for supporting us and making the best possible few years (writing on February 2022) that we could ever ask for. This server has created memories for all and we thank every single one of you out there for it, no matter how big or small of an impact you had.
+# THANK *YOU*!
+#
+# For now, the Discord server will remain alive, which you can join at dsc.gg/rebeldupe
+# If you need any help, you can direct message any of the developers of these scripts:
+#   Lynxdeer  (Lynxdeer#5243    ||  431961511557070868)
+#   Cheese    (TehCheese#1075   ||  493453098199547905)
+#   Luke      (LukeIThink#5106  ||  296823576156307467)
+#   Cyber     (CyberCake#9221   ||  351410272256262145)
+# And if you need help with anything else, you can DM Rebel (the creator and owner of RebelDupe):
+#   Rebel     (Butler#3727      ||  193938515342393345)
+#
+# IMPORTANT SKRIPT NOTE: Some of these scripts rely on certain locations, variables, people, etc. that will need to be adjusted for a server if any developers out there are going to use it for their purposes
+#
+# This text doesn't have to stay, remove it if you wish
+# ------------------------------------------------------------------------------------------------------
+
+on command "uhcstart":
+	player is "Lynxdeer" or "RebelMC"
+	cancel event
+	delete {uhcstarted}
+	broadcast ""
+	broadcast "&6A UHC IS STARTING! Do /warp uhc to participate! &cWARNING: Your inventory will be cleared!"
+	broadcast "&eThere is no prize, it's just for fun!"
+	broadcast ""
+
+on command "uhcstartstart":
+	player is "Lynxdeer" or "RebelMC"
+	cancel event
+	execute player command "//replacenear 10 barrier air"
+	broadcast "&6The uhc has started! You can no longer join!"
+	set {uhcstarted} to true
+	
+on command "warp uhc":
+	{uhcstarted} is not true
+	if {uhclist::*} does not contain player:
+		cancel event
+		open chest with 3 rows named "Warning" to player
+		format gui slot 13 of player with red concrete named "&cWarning" with lore "&cOnce you join the uhc, your inventory will be cleared!" and "&cAny use of /spawn, /home, /sethome" and "&cWill result in a removal of the competition." and "&fHowever, you can still dupe and toggleitems." and "&fClick here to join!" to run:
+			add player to {uhclist::*}
+			uncancel event
+			teleport player to {uhcspawn}
+			clear player's inventory
+	else:
+		send "&cYoure already in the uhc!"
+
+on command "spawn":
+	{uhclist::*} contains player
+	send "&cYou were removed from the uhc because you teleported to spawn!"
+	remove player from {uhclist::*}
+			
+
+on command "ec":
+	{uhclist::*} contains player
+	cancel event
+	send "&cYou cannot use your enderchest in a uhc!"
+
+on command "echest":
+	{uhclist::*} contains player
+	cancel event
+	send "&cYou cannot use your enderchest in a uhc!"
+
+on command "enderchest":
+	{uhclist::*} contains player
+	cancel event
+	send "&cYou cannot use your enderchest in a uhc!"
+
+on rightclick on ender chest:
+	{uhclist::*} contains player
+	cancel event
+	send "&cYou cannot use your enderchest in a uhc!"
+
+on command:
+	{uhclist::*} contains player
+	command contains "home"
+	send "&cYou were removed from the uhc because you used a home command!"
+	cancel event
+	remove player from {uhclist::*}
+	teleport player to {spawn}
+
+on command "setuhcspawn":
+	player is "Lynxdeer"
+	set {uhcspawn} to location of player
+	send "&aset uhc spawn"
+
+on command "uhcspawn":
+	player is "Lynxdeer"
+	teleport player to {uhcspawn}
+
+on break of oak leaves:
+	{uhclist::*} contains player
+	chance of 10%:
+		drop an apple at the event-block
+
+on break of iron ore:
+	{uhclist::*} contains player
+	cancel event
+	set event-block to air
+	drop an iron ingot
+
+on break of gold ore:
+	{uhclist::*} contains player
+	cancel event
+	set event-block to air
+	drop a gold ingot
+
+on respawn:
+	wait 2 ticks
+	{uhclist::*} contains player
+	teleport player to {spawn}
+	execute player command "spawn"
+	remove player from {uhclist}
+	send "&cYou died and were removed from the uhc!"
+
+on portal enter:
+	{uhclist::*} contains player
+	send "&cYou cannot enter portals in the uhc!"
+	set the block below player to air
+	create a safe explosion of force 3 at player
+on command "uhclist":
+	send "%{uhclist::*}%"
+
+on command "uhcaddme":
+	player is "Lynxdeer"
+	send "e"
+	add player to {uhclist::*}
+
+on command "uhclistclear":
+	player is "Lynxdeer"
+	send "cleared uhc list"
+	delete {uhclist::*}

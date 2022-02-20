@@ -1,0 +1,530 @@
+# ------------------------------------------------------------------------------------------------------
+# REBELDUPE SKRIPT
+# > top.sk
+#
+# This is one of the publicly-released scripts from RebelDupe on github.com/CyberedCake/RDScripts. Feel free to use whatever you'd like or use the script in your server altogether to help keep the void dupe genre alive or maybe for your own server ideas!
+#
+# Thank you to the developers who created these: Lynxdeer, TehCheese, Luke, and CyberedCake
+# Thank you to the RebelDupe community for supporting us and making the best possible few years (writing on February 2022) that we could ever ask for. This server has created memories for all and we thank every single one of you out there for it, no matter how big or small of an impact you had.
+# THANK *YOU*!
+#
+# For now, the Discord server will remain alive, which you can join at dsc.gg/rebeldupe
+# If you need any help, you can direct message any of the developers of these scripts:
+#   Lynxdeer  (Lynxdeer#5243    ||  431961511557070868)
+#   Cheese    (TehCheese#1075   ||  493453098199547905)
+#   Luke      (LukeIThink#5106  ||  296823576156307467)
+#   Cyber     (CyberCake#9221   ||  351410272256262145)
+# And if you need help with anything else, you can DM Rebel (the creator and owner of RebelDupe):
+#   Rebel     (Butler#3727      ||  193938515342393345)
+#
+# IMPORTANT SKRIPT NOTE: Some of these scripts rely on certain locations, variables, people, etc. that will need to be adjusted for a server if any developers out there are going to use it for their purposes
+#
+# This text doesn't have to stay, remove it if you wish
+# ------------------------------------------------------------------------------------------------------
+
+command /top <text>:
+	aliases: /rebeldupe:top
+	usage: &cInvalid usage! &7/top <kills/deaths/dupes/playtime>
+	cooldown: 5 ticks
+	cooldown message: &cPlease slow down!
+	trigger:
+		if arg 1 is "kills" or "kill" or "k":
+			loop {kills::*}:
+				add 1 to {_size}
+				if {_low.to.high.list::%loop-value%} is not set:
+					set {_low.to.high.list::%loop-value%} to loop-index
+				else:
+					set {_n} to 0
+					loop {_size} times:
+						set {_n} to {_n}+1
+						{_low.to.high.list::%loop-value-1%.%{_n}%} is not set:
+							set {_low.to.high.list::%loop-value-1%.%{_n}%} to loop-index
+							stop loop
+			wait 1 tick
+			set {_n} to size of {_low.to.high.list::*}
+			loop {_low.to.high.list::*}:
+				set {_high.to.low.list::%{_n}%} to loop-value
+				set {_n} to {_n}-1
+			wait 1 tick
+			set {_i} to 0
+			set {_line} to 3
+			send "&8&m------------------------"
+			send "&a&lKills Leaderboard"
+			loop {_high.to.low.list::*}:
+				if {_aldone.%loop-value parsed as offlineplayer%} is true:
+					continue
+				set {_aldone.%loop-value parsed as offlineplayer%} to true
+				set {_player} to "&cError"
+				set {_playerdname} to "&cError"
+				add 1 to {_topnumber}
+				set {_player} to loop-value
+				set {_playerdname} to loop-value parsed as offlineplayer's display name
+				set {_num.%loop-value parsed as offlineplayer%} to true
+				set {_playerdname} to "&4%loop-value parsed as offlineplayer%"
+				set {_playerdname} to "%{dispname.%loop-value parsed as offlineplayer%}%"
+				if {online.%loop-value parsed as offlineplayer%} is true:
+					set {_playerdname} to loop-value parsed as offlineplayer's display name
+				add 1 to {_i}
+				send "&f%{_topnumber}% &8» &e%{_playerdname}% &8» &e%{kills::%{_player}%}% &ekills"
+				add 1 to {_line}
+				if {_topnumber} > 9:
+					stop loop
+			send "&b"
+			send "&7&oNote: Hologram leaderboards have been moved to &f/leaderboard"
+			send "&8&m------------------------"
+			stop
+		if arg 1 is "dupes" or "dupe" or "du":
+			loop {totaldupes::*}:
+				add 1 to {_size}
+				if {_low.to.high.list::%loop-value%} is not set:
+					set {_low.to.high.list::%loop-value%} to loop-index
+				else:
+					set {_n} to 0
+					loop {_size} times:
+						set {_n} to {_n}+1
+						{_low.to.high.list::%loop-value-1%.%{_n}%} is not set:
+							set {_low.to.high.list::%loop-value-1%.%{_n}%} to loop-index
+							stop loop
+			wait 1 tick
+			set {_n} to size of {_low.to.high.list::*}
+			loop {_low.to.high.list::*}:
+				set {_high.to.low.list::%{_n}%} to loop-value
+				set {_n} to {_n}-1
+			wait 1 tick
+			set {_i} to 0
+			set {_line} to 3
+			send "&8&m------------------------"
+			send "&a&lDupes Leaderboard"
+			loop {_high.to.low.list::*}:
+				if {_aldone.%loop-value parsed as offlineplayer%} is true:
+					continue
+				set {_aldone.%loop-value parsed as offlineplayer%} to true
+				set {_player} to "&cError"
+				set {_playerdname} to "&cError"
+				add 1 to {_topnumber}
+				set {_player} to loop-value
+				set {_playerdname} to loop-value parsed as offlineplayer's display name
+				set {_num.%loop-value parsed as offlineplayer%} to true
+				set {_playerdname} to "&4%loop-value parsed as offlineplayer%"
+				set {_playerdname} to "%{dispname.%loop-value parsed as offlineplayer%}%"
+				if {online.%loop-value parsed as offlineplayer%} is true:
+					set {_playerdname} to loop-value parsed as offlineplayer's display name
+				add 1 to {_i}
+				send "&f%{_topnumber}% &8» &e%{_playerdname}% &8» &e%{totaldupes::%{_player}%}% &edupes"
+				add 1 to {_line}
+				if {_topnumber} > 9:
+					stop loop
+			send "&b"
+			send "&7&oNote: Hologram leaderboards have been moved to &f/leaderboard"
+			send "&8&m------------------------"
+			stop
+		if arg 1 is "deaths" or "death" or "d":
+			loop {deaths::*}:
+				add 1 to {_size}
+				if {_low.to.high.list::%loop-value%} is not set:
+					set {_low.to.high.list::%loop-value%} to loop-index
+				else:
+					set {_n} to 0
+					loop {_size} times:
+						set {_n} to {_n}+1
+						{_low.to.high.list::%loop-value-1%.%{_n}%} is not set:
+							set {_low.to.high.list::%loop-value-1%.%{_n}%} to loop-index
+							stop loop
+			wait 1 tick
+			set {_n} to size of {_low.to.high.list::*}
+			loop {_low.to.high.list::*}:
+				set {_high.to.low.list::%{_n}%} to loop-value
+				set {_n} to {_n}-1
+			wait 1 tick
+			set {_i} to 0
+			set {_line} to 3
+			send "&8&m------------------------"
+			send "&a&lDeaths Leaderboard"
+			loop {_high.to.low.list::*}:
+				if {_aldone.%loop-value parsed as offlineplayer%} is true:
+					continue
+				set {_aldone.%loop-value parsed as offlineplayer%} to true
+				set {_player} to "&cError"
+				set {_playerdname} to "&cError"
+				add 1 to {_topnumber}
+				set {_player} to loop-value
+				set {_playerdname} to loop-value parsed as offlineplayer's display name
+				set {_num.%loop-value parsed as offlineplayer%} to true
+				set {_playerdname} to "&4%loop-value parsed as offlineplayer%"
+				set {_playerdname} to "%{dispname.%loop-value parsed as offlineplayer%}%"
+				if {online.%loop-value parsed as offlineplayer%} is true:
+					set {_playerdname} to loop-value parsed as offlineplayer's display name
+				add 1 to {_i}
+				send "&f%{_topnumber}% &8» &e%{_playerdname}% &8» &e%{deaths::%{_player}%}% &edeaths"
+				add 1 to {_line}
+				if {_topnumber} > 9:
+					stop loop
+			send "&b"
+			send "&7&oNote: Hologram leaderboards have been moved to &f/leaderboard"
+			send "&8&m------------------------"
+			stop
+		if arg 1 is "playtimes" or "playtime" or "p":
+			loop {playtime.totalseconds::*}:
+				add 1 to {_size}
+				if {_low.to.high.list::%loop-value%} is not set:
+					set {_low.to.high.list::%loop-value%} to loop-index
+				else:
+					set {_n} to 0
+					loop {_size} times:
+						set {_n} to {_n}+1
+						{_low.to.high.list::%loop-value-1%.%{_n}%} is not set:
+							set {_low.to.high.list::%loop-value-1%.%{_n}%} to loop-index
+							stop loop
+			wait 1 tick
+			set {_n} to size of {_low.to.high.list::*}
+			loop {_low.to.high.list::*}:
+				set {_high.to.low.list::%{_n}%} to loop-value
+				set {_n} to {_n}-1
+			wait 1 tick
+			set {_i} to 0
+			set {_line} to 3
+			send "&8&m------------------------"
+			send "&a&lPlaytime Leaderboard"
+			loop {_high.to.low.list::*}:
+				if {_aldone.%loop-value parsed as offlineplayer%} is true:
+					continue
+				set {_aldone.%loop-value parsed as offlineplayer%} to true
+				set {_player} to "&cError"
+				set {_playerdname} to "&cError"
+				add 1 to {_topnumber}
+				set {_player} to loop-value
+				set {_playerdname} to loop-value parsed as offlineplayer's display name
+				set {_num.%loop-value parsed as offlineplayer%} to true
+				set {_playerdname} to "&4%loop-value parsed as offlineplayer%"
+				set {_playerdname} to "%{dispname.%loop-value parsed as offlineplayer%}%"
+				if {online.%loop-value parsed as offlineplayer%} is true:
+					set {_playerdname} to loop-value parsed as offlineplayer's display name
+				add 1 to {_i}
+				send "&f%{_topnumber}% &8» &e%{_playerdname}% &8» &e%{playtime.hours::%{_player}%}%&eh, &e&e%{playtime.minutes::%{_player}%}%&em, &e%{playtime.seconds::%{_player}%}%&es"
+				add 1 to {_line}
+				if {_topnumber} > 9:
+					stop loop
+			send "&b"
+			send "&7&oNote: Hologram leaderboards have been moved to &f/leaderboard"
+			send "&8&m------------------------"
+			stop
+		else:
+			send "&cThere isn't a leaderboard called %arg 1%"
+			send "&cValid leaderboards: kills, deaths, dupes, playtime"
+
+command /setdupes <offlineplayer> <integer>:
+	permission: sadiojgasdio
+	trigger:
+		set {totaldupes::%arg-1's uuid%} to arg-2
+
+every tick:
+	loop all players:
+		set {dispname.%loop-player%} to display name of loop-player
+
+command /leaderboard [<text>]:
+	aliases: /rebeldupe:leaderboard
+	usage: &cInvalid usage! &7/leaderboard
+	cooldown: 1 seconds
+	cooldown message: &cPlease slow down! &8(%remaining time%&8)
+	trigger:
+		if player's world is "leaderboards":
+			send "&cYou're already at the leaderboards!"
+			send "&cType &7/spawn &cto go to spawn!"
+			cancel cooldown
+			stop
+		execute console command "mvtp %player% leaderboards"
+		send "&aYou teleported to leaderboards!"
+		play sound "block.note_block.bit" with volume 100 and pitch 1 to the player
+
+command /setleaderboard:
+	aliases: /rebeldupe:setleaderboard
+	permission: staff.setleaderboard.position
+	permission message: &cYou do not have permission to execute this command!
+	usage: &cInvalid usage! &7/setleaderboard
+	trigger:
+		set {leaderboard} to player's location
+		send "&aSet leaderboard world to your location &8(%player's location%&8)"
+
+command /killtop:
+	usage: &cInvalid usage! &7/killtop
+	aliases: /topkill, /rebeldupe:killtop, /rebeldupe:topkill
+	trigger:
+		make player execute command "top kill"
+
+command /deathstop:
+	usage: &cInvalid usage! &7/deathstop
+	aliases: /topdeaths, /rebeldupe:deathstop, /rebeldupe:topdeaths
+	trigger:
+		make player execute command "top deaths"
+
+command /dupetop:
+	usage: &cInvalid usage! &7/dupetop
+	aliases: /topdupe, /rebeldupe:dupetop, /rebeldupe:topdupe
+	trigger:
+		make player execute command "top dupe"
+
+command /playtimetop:
+	usage: &cInvalid usage! &7/playtimetop
+	aliases: /topplaytime, /rebeldupe:playtimetop, /rebeldupe:topplaytime
+	trigger:
+		make player execute command "top playtime"
+
+on death of player:
+	if attacker is a player:
+		add 1 to {kills::%attacker%}
+		add 1 to {deaths::%victim%}
+
+every tick:
+	if {nextrefresh} <= 0:
+		set {nextrefresh} to 60
+		loop {kills::*}:
+			add 1 to {_size}
+			if {_low.to.high.list::%loop-value%} is not set:
+				set {_low.to.high.list::%loop-value%} to loop-index
+			else:
+				set {_n} to 0
+				loop {_size} times:
+					set {_n} to {_n}+1
+					{_low.to.high.list::%loop-value-1%.%{_n}%} is not set:
+						set {_low.to.high.list::%loop-value-1%.%{_n}%} to loop-index
+						stop loop
+		wait 1 tick
+		set {_n} to size of {_low.to.high.list::*}
+		loop {_low.to.high.list::*}:
+			set {_high.to.low.list::%{_n}%} to loop-value
+			set {_n} to {_n}-1
+		wait 1 tick
+		set {_i} to 0
+		set {_line} to 3
+		loop {_high.to.low.list::*}:
+			if {_aldone.%loop-value parsed as offlineplayer%} is true:
+				continue
+			set {_aldone.%loop-value parsed as offlineplayer%} to true
+			set {_player} to "&cError"
+			set {_playerdname} to "&cError"
+			add 1 to {_topnumber}
+			set {_player} to loop-value
+			set {_playerdname} to loop-value parsed as offlineplayer's display name
+			set {_num.%loop-value parsed as offlineplayer%} to true
+			set {_playerdname} to "&4%loop-value parsed as offlineplayer%"
+			set {_playerdname} to "%{dispname.%loop-value parsed as offlineplayer%}%"
+			if {online.%loop-value parsed as offlineplayer%} is true:
+				set {_playerdname} to loop-value parsed as offlineplayer's display name
+			add 1 to {_i}
+			execute console command "hd setline kill-top %{_line}% &r%{_topnumber}% &8» &e%{_playerdname}% &8» &e%{kills::%{_player}%}% &ekills"
+			add 1 to {_line}
+			if {_topnumber} > 9:
+				stop loop
+		set {nextlb1} to true
+
+every second:
+	if {nextlb1} is true:
+		delete {nextlb1}
+		wait 2 ticks
+		loop {totaldupes::*}:
+			add 1 to {_size}
+			if {_low.to.high.list::%loop-value%} is not set:
+				set {_low.to.high.list::%loop-value%} to loop-index
+			else:
+				set {_n} to 0
+				loop {_size} times:
+					set {_n} to {_n}+1
+					{_low.to.high.list::%loop-value-1%.%{_n}%} is not set:
+						set {_low.to.high.list::%loop-value-1%.%{_n}%} to loop-index
+						stop loop
+		wait 1 tick
+		set {_n} to size of {_low.to.high.list::*}
+		loop {_low.to.high.list::*}:
+			set {_high.to.low.list::%{_n}%} to loop-value
+			set {_n} to {_n}-1
+		wait 1 tick
+		set {_i} to 0
+		set {_line} to 3
+		loop {_high.to.low.list::*}:
+			if {_aldone.%loop-value parsed as offlineplayer%} is true:
+				continue
+			set {_aldone.%loop-value parsed as offlineplayer%} to true
+			set {_player} to "&cError"
+			set {_playerdname} to "&cError"
+			add 1 to {_topnumber}
+			set {_player} to loop-value
+			set {_playerdname} to loop-value parsed as offlineplayer's display name
+			set {_num.%loop-value parsed as offlineplayer%} to true
+			set {_playerdname} to "&4%loop-value parsed as offlineplayer%"
+			set {_playerdname} to "%{dispname.%loop-value parsed as offlineplayer%}%"
+			if {online.%loop-value parsed as offlineplayer%} is true:
+				set {_playerdname} to loop-value parsed as offlineplayer's display name
+			add 1 to {_i}
+			execute console command "hd setline dupe-top %{_line}% &r%{_topnumber}% &8» &e%{_playerdname}% &8» &e%{totaldupes::%{_player}%}% &edupes"
+			add 1 to {_line}
+			if {_topnumber} > 9:
+				stop loop
+		set {nextlb2} to true
+		stop
+
+every second:
+	if {nextlb2} is true:
+		delete {nextlb2}
+		wait 2 ticks
+		loop {deaths::*}:
+			add 1 to {_size}
+			if {_low.to.high.list::%loop-value%} is not set:
+				set {_low.to.high.list::%loop-value%} to loop-index
+			else:
+				set {_n} to 0
+				loop {_size} times:
+					set {_n} to {_n}+1
+					{_low.to.high.list::%loop-value-1%.%{_n}%} is not set:
+						set {_low.to.high.list::%loop-value-1%.%{_n}%} to loop-index
+						stop loop
+		wait 1 tick
+		set {_n} to size of {_low.to.high.list::*}
+		loop {_low.to.high.list::*}:
+			set {_high.to.low.list::%{_n}%} to loop-value
+			set {_n} to {_n}-1
+		wait 1 tick
+		set {_i} to 0
+		set {_line} to 3
+		loop {_high.to.low.list::*}:
+			if {_aldone.%loop-value parsed as offlineplayer%} is true:
+				continue
+			set {_aldone.%loop-value parsed as offlineplayer%} to true
+			set {_player} to "&cError"
+			set {_playerdname} to "&cError"
+			add 1 to {_topnumber}
+			set {_player} to loop-value
+			set {_playerdname} to loop-value parsed as offlineplayer's display name
+			set {_num.%loop-value parsed as offlineplayer%} to true
+			set {_playerdname} to "&4%loop-value parsed as offlineplayer%"
+			set {_playerdname} to "%{dispname.%loop-value parsed as offlineplayer%}%"
+			if {online.%loop-value parsed as offlineplayer%} is true:
+				set {_playerdname} to loop-value parsed as offlineplayer's display name
+			add 1 to {_i}
+			execute console command "hd setline death-top %{_line}% &r%{_topnumber}% &8» &e%{_playerdname}% &8» &e%{deaths::%{_player}%}% &edeaths"
+			add 1 to {_line}
+			if {_topnumber} > 9:
+				stop loop
+		set {nextlb3} to true
+		stop
+
+every second:
+	if {nextlb3} is true:
+		delete {nextlb3}
+		wait 2 ticks
+		loop {playtime.totalseconds::*}:
+			add 1 to {_size}
+			if {_low.to.high.list::%loop-value%} is not set:
+				set {_low.to.high.list::%loop-value%} to loop-index
+			else:
+				set {_n} to 0
+				loop {_size} times:
+					set {_n} to {_n}+1
+					{_low.to.high.list::%loop-value-1%.%{_n}%} is not set:
+						set {_low.to.high.list::%loop-value-1%.%{_n}%} to loop-index
+						stop loop
+		wait 1 tick
+		set {_n} to size of {_low.to.high.list::*}
+		loop {_low.to.high.list::*}:
+			set {_high.to.low.list::%{_n}%} to loop-value
+			set {_n} to {_n}-1
+		wait 1 tick
+		set {_i} to 0
+		set {_line} to 3
+		loop {_high.to.low.list::*}:
+			if {_aldone.%loop-value parsed as offlineplayer%} is true:
+				continue
+			set {_aldone.%loop-value parsed as offlineplayer%} to true
+			set {_player} to "&cError"
+			set {_playerdname} to "&cError"
+			add 1 to {_topnumber}
+			set {_player} to loop-value
+			set {_playerdname} to loop-value parsed as offlineplayer's display name
+			set {_num.%loop-value parsed as offlineplayer%} to true
+			set {_playerdname} to "&4%loop-value parsed as offlineplayer%"
+			set {_playerdname} to "%{dispname.%loop-value parsed as offlineplayer%}%"
+			if {online.%loop-value parsed as offlineplayer%} is true:
+				set {_playerdname} to loop-value parsed as offlineplayer's display name
+			add 1 to {_i}
+			execute console command "hd setline playtime-top %{_line}% &r%{_topnumber}% &8» &e%{_playerdname}% &8» &e%{playtime.hours::%{_player}%}%&eh, %{playtime.minutes::%{_player}%}%&em, &e%{playtime.seconds::%{_player}%}%&es"
+			add 1 to {_line}
+			if {_topnumber} > 9:
+				stop loop
+		stop
+
+every second:
+	loop all players:
+		if {playtime.seconds::%loop-player%} is not set:
+			set {playtime.seconds::%loop-player%} to 0
+			set {playtime.minutes::%loop-player%} to 0
+			set {playtime.hours::%loop-player%} to 0
+		add 1 to {playtime.totalseconds::%loop-player%}
+		add 1 to {playtime.seconds::%loop-player%}
+		if {playtime.seconds::%loop-player%} >= 60:
+			remove 60 from {playtime.seconds::%loop-player%}
+			add 1 to {playtime.minutes::%loop-player%}
+		if {playtime.minutes::%loop-player%} >= 60:
+			remove 60 from {playtime.minutes::%loop-player%}
+			set {playtime.seconds::%loop-player%} to 0
+			add 1 to {playtime.hours::%loop-player%}
+
+command /force-refresh:
+	permission: staff.forceupdate
+	permission message: &cYou do not have permission to execute this command!
+	usage: &cInvalid usage! &7/force-refresh
+	aliases: /rebeldupe:force-refresh
+	trigger:
+		if {cannotrefresh} >= 1:
+			send "&c%{cannotrefreshsender}% &calready refreshed the leaderboards. Please wait %{cannotrefresh}% &cseconds before refreshing again!"
+			stop
+		set {cannotrefresh} to 10
+		set {cannotrefreshsender} to sender
+		set {nextrefresh} to 0
+		send "&3You refreshed all the leaderboards!"
+
+every second:
+	remove 1 from {cannotrefresh}
+
+command /nextrefresh:
+	usage: &cInvalid usage! &7/nextrefresh
+	aliases: /rebeldupe:nextrefresh
+	trigger:
+		if {nextrefresh} is not set:
+			send "&cThe variable for next refresh is not set! Give us a moment to setup the variable. This will take ~5 minutes"
+			stop
+		send "&3The next refresh will occurr in &b%{nextrefresh}% &bseconds"
+
+every second:
+	remove 1 from {nextrefresh}
+
+command /playtime [<offlineplayer>] [<text>]:
+	usage: &cInvalid usage! &7/playtime [player]
+	cooldown: 0.5 seconds
+	cooldown message: &cPlease slow down! &8(%remaining time%&8)
+	trigger:
+		if arg 2 is set:
+			send "&cInvalid usage! &7/playtime [player]"
+			cancel cooldown
+			stop
+		if arg 1 is not set:
+			send "&dYour Playtime &a>> &e%{playtime.hours::%player%}%&eh, %{playtime.minutes::%player%}%&em, %{playtime.seconds::%player%}%&es"
+			stop
+		if arg 1 is "top" or "leaderboard":
+			make player execute command "top playtime"
+			stop
+		if arg 1 is set:
+			if {playtime.seconds::%arg 1%} is not set:
+				set {playtime.seconds::%arg 1%} to 0
+				set {playtime.minutes::%arg 1%} to 0
+				set {playtime.hours::%arg 1%} to 0
+			send "&a%arg 1%&a's &dPlaytime &a>> &e%{playtime.hours::%arg 1%}%&eh, %{playtime.minutes::%arg 1%}%&em, %{playtime.seconds::%arg 1%}%&es"
+			stop
+
+every 300 seconds:
+	execute console command "save-all"
+
+command /lreset [<text>]:
+	trigger:
+		if player is not "CyberedCake" or "CONSOLE":
+			stop
+		send "&aResetting..."
+		

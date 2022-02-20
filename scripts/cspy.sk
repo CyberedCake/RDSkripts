@@ -1,0 +1,146 @@
+# ------------------------------------------------------------------------------------------------------
+# REBELDUPE SKRIPT
+# > cspy.sk
+#
+# This is one of the publicly-released scripts from RebelDupe on github.com/CyberedCake/RDScripts. Feel free to use whatever you'd like or use the script in your server altogether to help keep the void dupe genre alive or maybe for your own server ideas!
+#
+# Thank you to the developers who created these: Lynxdeer, TehCheese, Luke, and CyberedCake
+# Thank you to the RebelDupe community for supporting us and making the best possible few years (writing on February 2022) that we could ever ask for. This server has created memories for all and we thank every single one of you out there for it, no matter how big or small of an impact you had.
+# THANK *YOU*!
+#
+# For now, the Discord server will remain alive, which you can join at dsc.gg/rebeldupe
+# If you need any help, you can direct message any of the developers of these scripts:
+#   Lynxdeer  (Lynxdeer#5243    ||  431961511557070868)
+#   Cheese    (TehCheese#1075   ||  493453098199547905)
+#   Luke      (LukeIThink#5106  ||  296823576156307467)
+#   Cyber     (CyberCake#9221   ||  351410272256262145)
+# And if you need help with anything else, you can DM Rebel (the creator and owner of RebelDupe):
+#   Rebel     (Butler#3727      ||  193938515342393345)
+#
+# IMPORTANT SKRIPT NOTE: Some of these scripts rely on certain locations, variables, people, etc. that will need to be adjusted for a server if any developers out there are going to use it for their purposes
+#
+# This text doesn't have to stay, remove it if you wish
+# ------------------------------------------------------------------------------------------------------
+
+#commandspy
+#
+#
+#
+#
+#
+#
+#
+#
+#
+
+command /cs [<text>] [<text>]:
+	usage: &cInvalid usage! Use &7/commandspy help &cfor help!
+	permission: cspy.use
+	permission message: &cYou must be admin or higher to run this command.
+	aliases: /commandspy, /cspy, /rebeldupe:cs, /rebeldupe:commandspy, /rebeldupe:cspy
+	trigger:
+		if arg 1 is not set:
+			if arg 2 is not set:
+				if {commandspy::%player%} is not set:
+					send "&cIt seems this is your first time using CommandSpy on this server."
+					json("%player%", "&6&lCLICK HERE||cmd:/commandspy||ttp:&aClick to enable &6CommandSpy|||| &cto enable CommandSpy")
+					set {commandspy::%player%} to false
+					stop
+				if {commandspy::%player%} is false:
+					send "&6You enabled CommandSpy"
+					add "CONSOLE" to {cspy.blockedsenders.%player%::*}
+					set {commandspy::%player%} to true
+					stop
+				if {commandspy::%player%} is true:
+					send "&6You disabled CommandSpy"
+					remove "CONSOLE" from {cspy.blockedsenders.%player%::*}
+					set {commandspy::%player%} to false
+		if arg 1 is set:
+			if arg 1 is "on" or "enable":
+				send "&6You enabled CommandSpy"
+				set {commandspy::%player%} to true
+				add "CONSOLE" to {cspy.blockedsenders.%player%::*}
+				stop
+			if arg 1 is "off" or "disable":
+				send "&6You disabled CommandSpy"
+				set {commandspy::%player%} to false
+				remove "CONSOLE" from {cspy.blockedsenders.%player%::*}
+				stop
+			if arg 1 is "blockcmd":
+				if arg 2 is not set:
+					send "&cInvalid usage! &7/commandspy blockcmd <command without slash>/list"
+					stop
+				if arg 2 is "list":
+					send "&b"
+					send "&6&lALL OF YOUR BLOCKED COMMANDS:"
+					if {cspy.blockedcmds.%player%::*} is not set:
+						send "&cYou have no blocked commands!"
+					if {cspy.blockedcmds.%player%::*} is set:
+						loop {cspy.blockedcmds.%player%::*}:
+							json("%player%", "&7/%loop-value%||ttp:&cClick to remove &6/%loop-value% &cfrom your blocked commands list!||cmd:/commandspy blockcmd %loop-value%")
+					send "&b"
+					stop
+				if arg 2 is set:
+					if {cspy.blockedcmds.%player%::*} does not contain arg-2:
+						send "&aYou added &6/%arg 2% &ato your blocked commands list!"
+						add arg-2 to {cspy.blockedcmds.%player%::*}
+						stop
+					if {cspy.blockedcmds.%player%::*} contains arg-2:
+						send "&cYou removed &6/%arg 2% &cfrom your blocked commands list!"
+						remove arg-2 from {cspy.blockedcmds.%player%::*}
+						stop
+			if arg 1 is "block":
+				if arg 2 is not set:
+					send "&cInvalid usage! &7/commandspy block <sender>/list"
+					stop
+				if arg 2 is "list":
+					send "&b"
+					send "&6&lALL OF YOUR BLOCKED COMMAND SENDERS:"
+					if {cspy.blockedsenders.%player%::*} is not set:
+						send "&cYou have no blocked senders!"
+					if {cspy.blockedsenders.%player%::*} is set:
+						loop {cspy.blockedsenders.%player%::*}:
+							json("%player%", "&7%loop-value%||ttp:&cClick to remove &6%loop-value% &cfrom your blocked senders list!||cmd:/commandspy block %loop-value%")
+					send "&b"
+					stop
+				if arg 2 is set:
+					if arg 2 is "CONSOLE":
+						send "&cThat sender is blocked by default!"
+						stop
+					if {cspy.blockedsenders.%player%::*} does not contain "%arg-2%":
+						send "&aYou added &6%arg 2% &ato your blocked senders list!"
+						add "%arg-2%" to {cspy.blockedsenders.%player%::*}
+						stop
+					if {cspy.blockedsenders.%player%::*} contains "%arg-2%":
+						send "&cYou removed &6%arg 2% &cfrom your blocked senders list!"
+						remove "%arg-2%" from {cspy.blockedsenders.%player%::*}
+						stop
+			if arg 1 is "help":
+				send "&6"
+				send "&6&lCOMMANDSPY HELP:"
+				send "&b/commandspy &f- &eToggles CommandSpy"
+				send "&b/commandspy block <sender>/list &f- &eBlock a certain sender from your CommandSpy"
+				send "&b/commandspy blockcmd <command without slash>/list &f- &eBlock a certain command from your CommandSpy"
+				send "&b/commandspy reset &f- &eReset your commandspy"
+				send "&b/commandspy help &f- &ePrints this help screen"
+				send "&b"
+				stop
+			else:
+				make player execute command "commandspy help"
+
+on command:
+	loop all players:
+		if loop-player is not sender:
+			if {commandspy::%loop-player%} is true:
+				if {cspy.blockedcmds.%loop-player%::*} does not contain command:
+					if {cspy.blockedsenders.%loop-player%::*} does not contain "%sender%":
+						if loop-player has permission "cspy.use":
+							json("%loop-player%", "&2&lCSPY ➜ &7%sender%&7: ||||&d/%colored complete command%||ttp:&bClick to paste &d/%complete command% &bin chat!||sgt:/%complete command%")
+
+on command:
+	if {combat.%player%} is set:
+		if player does not have permission "staff.combat.bypasscmd":
+			if command is not "dupe" or "d":
+				send "&cNo commands during combat!" to player
+				cancel event
+				stop

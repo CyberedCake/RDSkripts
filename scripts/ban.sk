@@ -1,0 +1,261 @@
+# ------------------------------------------------------------------------------------------------------
+# REBELDUPE SKRIPT
+# > ban.sk
+#
+# This is one of the publicly-released scripts from RebelDupe on github.com/CyberedCake/RDScripts. Feel free to use whatever you'd like or use the script in your server altogether to help keep the void dupe genre alive or maybe for your own server ideas!
+#
+# Thank you to the developers who created these: Lynxdeer, TehCheese, Luke, and CyberedCake
+# Thank you to the RebelDupe community for supporting us and making the best possible few years (writing on February 2022) that we could ever ask for. This server has created memories for all and we thank every single one of you out there for it, no matter how big or small of an impact you had.
+# THANK *YOU*!
+#
+# For now, the Discord server will remain alive, which you can join at dsc.gg/rebeldupe
+# If you need any help, you can direct message any of the developers of these scripts:
+#   Lynxdeer  (Lynxdeer#5243    ||  431961511557070868)
+#   Cheese    (TehCheese#1075   ||  493453098199547905)
+#   Luke      (LukeIThink#5106  ||  296823576156307467)
+#   Cyber     (CyberCake#9221   ||  351410272256262145)
+# And if you need help with anything else, you can DM Rebel (the creator and owner of RebelDupe):
+#   Rebel     (Butler#3727      ||  193938515342393345)
+#
+# IMPORTANT SKRIPT NOTE: Some of these scripts rely on certain locations, variables, people, etc. that will need to be adjusted for a server if any developers out there are going to use it for their purposes
+#
+# This text doesn't have to stay, remove it if you wish
+# ------------------------------------------------------------------------------------------------------
+
+on inventory close:
+	delete {ban.gui.%player%}
+
+on join:
+	delete {ban.gui.%player%}
+	delete {ban.customreason.%player%}
+
+on inventory click:
+	if {ban.gui.%player%} is true:
+		cancel event
+		if item is lime stained glass pane with lore "&cSelected":
+			send "&cYou already have that selected!"
+			stop
+		if item is yellow stained glass pane named "&aDuration: &f1 day":
+			send "&aSelected &61 day &aban"
+			set {bantime.%player%} to 1
+			resetBan(player)
+			format slot 0 of player with lime stained glass pane of protection with no nbt named "&aDuration: &f1 day" with lore "&cSelected" to run [stop]
+			stop
+		if item is yellow stained glass pane named "&aDuration: &f3 days":
+			send "&aSelected &63 day &aban"
+			set {bantime.%player%} to 3
+			resetBan(player)
+			format slot 1 of player with lime stained glass pane of protection with no nbt named "&aDuration: &f3 days" with lore "&cSelected" to run [stop]
+			stop
+		if item is orange stained glass pane named "&aDuration: &f5 days":
+			send "&aSelected &65 day &aban"
+			set {bantime.%player%} to 5
+			resetBan(player)
+			format slot 2 of player with lime stained glass pane of protection with no nbt named "&aDuration: &f5 days" with lore "&cSelected" to run [stop]
+			stop
+		if item is orange stained glass pane named "&aDuration: &f7 days":
+			send "&aSelected &67 day &aban"
+			set {bantime.%player%} to 7
+			resetBan(player)
+			format slot 3 of player with lime stained glass pane of protection with no nbt named "&aDuration: &f7 days" with lore "&cSelected" to run [stop]
+			stop
+		if item is pink stained glass pane named "&aDuration: &f14 days":
+			send "&aSelected &614 day &aban"
+			set {bantime.%player%} to 14
+			resetBan(player)
+			format slot 4 of player with lime stained glass pane of protection with no nbt named "&aDuration: &f14 days" with lore "&cSelected" to run [stop]
+			stop
+		if item is pink stained glass pane named "&aDuration: &f30 days":
+			send "&aSelected &630 day &aban"
+			set {bantime.%player%} to 30
+			resetBan(player)
+			format slot 5 of player with lime stained glass pane of protection with no nbt named "&aDuration: &f30 days" with lore "&cSelected" to run [stop]
+			stop
+		if item is purple stained glass pane named "&aDuration: &f90 days":
+			send "&aSelected &690 day &aban"
+			set {bantime.%player%} to 90
+			resetBan(player)
+			format slot 6 of player with lime stained glass pane of protection with no nbt named "&aDuration: &f90 days" with lore "&cSelected" to run [stop]
+			stop
+		if item is purple stained glass pane named "&aDuration: &f1 year":
+			send "&aSelected &61 year &aban"
+			set {bantime.%player%} to 365
+			resetBan(player)
+			format slot 7 of player with lime stained glass pane of protection with no nbt named "&aDuration: &f1 year" with lore "&cSelected" to run [stop]
+			stop
+		if item is red stained glass pane named "&aDuration: &fPermanent":
+			send "&aSelected &6permanent &aban"
+			set {bantime.%player%} to 999
+			resetBan(player)
+			format slot 8 of player with lime stained glass pane of protection with no nbt named "&aDuration: &fPermanent" with lore "&cSelected" to run [stop]
+			stop
+		if item is cyan stained glass pane named "&aReason: &fCheating":
+			send "&aSelected reason &6Cheating"
+			set {banreason.%player%} to "Cheating"
+			resetBan(player)
+			stop
+		if item is cyan stained glass pane named "&aReason: &fBot":
+			send "&aSelected reason &6Bot"
+			set {banreason.%player%} to "Bot"
+			resetBan(player)
+			stop
+		if item is blue stained glass pane named "&aReason: &fForce OP":
+			send "&aSelected reason &6Force OP"
+			set {banreason.%player%} to "Force OP"
+			resetBan(player)
+			stop
+		if item is blue stained glass pane named "&aReason: &fHomophobia":
+			send "&aSelected reason &6Homophobia"
+			set {banreason.%player%} to "Homophobia"
+			resetBan(player)
+			stop
+		if item is green stained glass pane named "&aReason: &fRacism":
+			send "&aSelected reason &6Racism"
+			set {banreason.%player%} to "Racism"
+			resetBan(player)
+			stop
+		if item is green stained glass pane named "&aReason: &fLag Machine":
+			send "&aSelected reason &6Lag Machine"
+			set {banreason.%player%} to "Lag Machine"
+			resetBan(player)
+			stop
+		if item is brown stained glass pane named "&aReason: &fUnauthorized Alternate Account or IP":
+			send "&aSelected reason &6Unauthorized Alternate Account or IP"
+			set {banreason.%player%} to "Unauthorized Alternate Account or IP"
+			resetBan(player)
+			stop
+		if item is brown stained glass pane named "&aReason: &fNo Reason":
+			send "&aSelected reason &6No Reason"
+			set {banreason.%player%} to "No Reason"
+			resetBan(player)
+			stop
+		if item is pink stained glass pane named "&aReason: &fCustom &b[CLICK HERE]":
+			close player's inventory
+			send title "&b&lChoose custom reason" with subtitle "&7in chat" to player for 999 seconds with fadein 1 second and fadeout 1 second
+			send "&b"
+			send "&b&lChoose custom reason &7in chat"
+			set {ban.customreason.%player%} to true
+			stop
+		if item is red stained glass pane named "&aSilent":
+			send "&aSelected broadcast &6Silently"
+			set {silent.%player%} to true
+			resetBan(player)
+			stop
+		if item is red stained glass pane named "&aPublic":
+			send "&aSelected broadcast &6Normal"
+			set {silent.%player%} to false
+			resetBan(player)
+			stop
+		if item is emerald block named "&a&lCONFIRM":
+			close player's inventory
+			play sound "entity.player.levelup" with volume 1000 and pitch 2 to the player
+			make player execute command "sendpunished %{ban.%player%}%"
+			if {bantime.%player%} is 999:
+				if {silent.%player%} is true:
+					make player execute command "maxbansplus:ban %{ban.%player%}% %{banreason.%player%}% -s"
+				if {silent.%player%} is false:
+					make player execute command "maxbansplus:ban %{ban.%player%}% %{banreason.%player%}%"
+			if {bantime.%player%} is not 999:
+				if {silent.%player%} is true:
+					make player execute command "maxbansplus:ban %{ban.%player%}% %{bantime.%player%}% d %{banreason.%player%}% -s"
+				if {silent.%player%} is false:
+					make player execute command "maxbansplus:ban %{ban.%player%}% %{bantime.%player%}% d %{banreason.%player%}%"
+		if item is redstone block named "&c&lCANCEL" with lore "&fCancel ban against %{ban.%player%}%", "&7" and "&eClick to cancel ban against %{ban.%player%}%":
+			close player's inventory
+			send "&c&lCancelled ban against &6%{ban.%player%}%"
+			play sound "entity.skeleton.death" with volume 1000 and pitch 1 to the player
+
+
+command /ban <offlineplayer> [<text>]:
+	usage: &cInvalid usage! &7/ban <player>
+	permission: maxbans.ban
+	permission message: &cYou do not have permission to execute this command!
+	aliases: /tempban, /rebeldupe:ban, /rebeldupe:tempban
+	trigger:
+		if arg 2 is set:
+			send "&cInvalid usage! &7/ban <player>"
+			stop
+		if {joined::%arg 1's uuid%} is not set:
+			send "&cThat player has never joined the server before!"
+			stop
+		send "&aOpening a ban against %arg 1%"
+		if {ban.gui.%player%} is not set:
+			open virtual chest with 6 rows named "Ban %arg 1% [LOADING]" to sender
+			wait 1 tick
+		set {ban.%player%} to arg-1
+		set {ban.gui.%player%} to true
+		set {silent.%player%} to true
+		open virtual chest with 6 rows named "Ban %arg 1%" to sender
+		set {banreason.%player%} to "Cheating"
+		set {bantime.%player%} to 5
+		resetBan(player)
+
+function resetBan(p: player):
+	play sound "ui.button.click" with volume 1000 and pitch 1 to {_p}
+	open virtual chest with 6 rows named "Ban %{ban.%{_p}%}%" to {_p}
+	format slot 0 of {_p} with yellow stained glass pane named "&aDuration: &f1 day" to run [stop]
+	format slot 1 of {_p} with yellow stained glass pane named "&aDuration: &f3 days" to run [stop]
+	format slot 2 of {_p} with orange stained glass pane named "&aDuration: &f5 days" to run [stop]
+	format slot 3 of {_p} with orange stained glass pane named "&aDuration: &f7 days" to run [stop]
+	format slot 4 of {_p} with pink stained glass pane named "&aDuration: &f14 days" to run [stop]
+	format slot 5 of {_p} with pink stained glass pane named "&aDuration: &f30 days" to run [stop]
+	format slot 6 of {_p} with purple stained glass pane named "&aDuration: &f90 days" to run [stop]
+	format slot 7 of {_p} with purple stained glass pane named "&aDuration: &f1 year" to run [stop]
+	format slot 8 of {_p} with red stained glass pane named "&aDuration: &fPermanent" to run [stop]
+	format slot 18 of {_p} with cyan stained glass pane named "&aReason: &fCheating" to run [stop]
+	format slot 19 of {_p} with cyan stained glass pane named "&aReason: &fBot" to run [stop]
+	format slot 20 of {_p} with blue stained glass pane named "&aReason: &fForce OP" to run [stop]
+	format slot 21 of {_p} with blue stained glass pane named "&aReason: &fHomophobia" to run [stop]
+	format slot 22 of {_p} with green stained glass pane named "&aReason: &fRacism" to run [stop]
+	format slot 23 of {_p} with green stained glass pane named "&aReason: &fLag Machine" to run [stop]
+	format slot 24 of {_p} with brown stained glass pane named "&aReason: &fUnauthorized Alternate Account or IP" to run [stop]
+	format slot 25 of {_p} with brown stained glass pane named "&aReason: &fNo Reason" to run [stop]
+	format slot 26 of {_p} with pink stained glass pane named "&aReason: &fCustom &b[CLICK HERE]" to run [stop]
+	format slot 39 of {_p} with red stained glass pane named "&aSilent" to run [stop]
+	format slot 41 of {_p} with red stained glass pane named "&aPublic" to run [stop]
+	if {silent.%{_p}%} is true:
+		format slot 53 of {_p} with emerald block named "&a&lCONFIRM" with lore "&6Ban: &f%{ban.%{_p}%}%", "&6Duration: &f%{bantime.%{_p}%}% &fdays", "&6Reason: &f%{banreason.%{_p}%}%", "&6Silent? &fYes", "&7" and "&eClick to ban %{ban.%{_p}%}%" to run [stop]
+	if {silent.%{_p}%} is false:
+		format slot 53 of {_p} with emerald block named "&a&lCONFIRM" with lore "&6Ban: &f%{ban.%{_p}%}%", "&6Duration: &f%{bantime.%{_p}%}% &fdays", "&6Reason: &f%{banreason.%{_p}%}%", "&6Silent? &fNo", "&7" and "&eClick to ban %{ban.%{_p}%}%" to run [stop]
+	format slot 45 of {_p} with redstone block named "&c&lCANCEL" with lore "&fCancel ban against %{ban.%{_p}%}%", "&7" and "&eClick to cancel ban against %{ban.%{_p}%}%" to run [stop]
+	if {bantime.%{_p}%} is 1:
+		format slot 0 of {_p} with lime stained glass pane of protection with no nbt named "&aDuration: &f1 day" with lore "&cSelected" to run [stop]
+	if {bantime.%{_p}%} is 3:
+		format slot 1 of {_p} with lime stained glass pane of protection with no nbt named "&aDuration: &f3 days" with lore "&cSelected" to run [stop]
+	if {bantime.%{_p}%} is 5:
+		format slot 2 of {_p} with lime stained glass pane of protection with no nbt named "&aDuration: &f5 days" with lore "&cSelected" to run [stop]
+	if {bantime.%{_p}%} is 7:
+		format slot 3 of {_p} with lime stained glass pane of protection with no nbt named "&aDuration: &f7 days" with lore "&cSelected" to run [stop]
+	if {bantime.%{_p}%} is 14:
+		format slot 4 of {_p} with lime stained glass pane of protection with no nbt named "&aDuration: &f14 days" with lore "&cSelected" to run [stop]
+	if {bantime.%{_p}%} is 30:
+		format slot 5 of {_p} with lime stained glass pane of protection with no nbt named "&aDuration: &f30 days" with lore "&cSelected" to run [stop]
+	if {bantime.%{_p}%} is 90:
+		format slot 6 of {_p} with lime stained glass pane of protection with no nbt named "&aDuration: &f90 days" with lore "&cSelected" to run [stop]
+	if {bantime.%{_p}%} is 365:
+		format slot 7 of {_p} with lime stained glass pane of protection with no nbt named "&aDuration: &f90 days" with lore "&cSelected" to run [stop]
+	if {bantime.%{_p}%} is 999:
+		format slot 8 of {_p} with lime stained glass pane of protection with no nbt named "&aDuration: &fPermanent" with lore "&cSelected" to run [stop]
+	if {banreason.%{_p}%} is "Cheating":
+		format slot 18 of {_p} with lime stained glass pane of protection with no nbt named "&aReason: &fCheating" with lore "&cSelected" to run [stop]
+	if {banreason.%{_p}%} is "Bot":
+		format slot 19 of {_p} with lime stained glass pane of protection with no nbt named "&aReason: &fBot" with lore "&cSelected" to run [stop]
+	if {banreason.%{_p}%} is "Force OP":
+		format slot 20 of {_p} with lime stained glass pane of protection with no nbt named "&aReason: &fForce OP" with lore "&cSelected" to run [stop]
+	if {banreason.%{_p}%} is "Homophobia":
+		format slot 21 of {_p} with lime stained glass pane of protection with no nbt named "&aReason: &fHomophobia" with lore "&cSelected" to run [stop]
+	if {banreason.%{_p}%} is "Racism":
+		format slot 22 of {_p} with lime stained glass pane of protection with no nbt named "&aReason: &fRacism" with lore "&cSelected" to run [stop]
+	if {banreason.%{_p}%} is "Lag Machine":
+		format slot 23 of {_p} with lime stained glass pane of protection with no nbt named "&aReason: &fLag Machine" with lore "&cSelected" to run [stop]
+	if {banreason.%{_p}%} is "Unauthorized Alternate Account or IP":
+		format slot 24 of {_p} with lime stained glass pane of protection with no nbt named "&aReason: &fUnauthorized Alternate Account or IP" with lore "&cSelected" to run [stop]
+	if {banreason.%{_p}%} is "No Reason":
+		format slot 25 of {_p} with lime stained glass pane of protection with no nbt named "&aReason: &fNo Reason" with lore "&cSelected" to run [stop]
+	if {banreason.%{_p}%} is not "Cheating" or "Bot" or "Force OP" or "Homophobia" or "Racism" or "Lag Machine" or "Unauthorized Alternate Account or IP" or "No Reason":
+		format slot 26 of {_p} with lime stained glass pane of protection with no nbt named "&aReason: %{banreason.%{_p}%}%" with lore "&cSelected" to run [stop]
+	if {silent.%{_p}%} is true:
+		format slot 39 of {_p} with lime stained glass pane of protection with no nbt named "&aSilent" with lore "&cSelected" to run [stop]
+	if {silent.%{_p}%} is false:
+		format slot 41 of {_p} with lime stained glass pane of protection with no nbt named "&aPublic" with lore "&cSelected" to run [stop]
+	set {ban.gui.%{_p}%} to true

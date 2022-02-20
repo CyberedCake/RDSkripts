@@ -1,0 +1,699 @@
+# ------------------------------------------------------------------------------------------------------
+# REBELDUPE SKRIPT
+# > stuff.sk
+#
+# DEVELOPER'S NOTE: The name of this script is quite vague because some of the contents was really simple and didn't deserve their own script file, and because of this this file is a disaster. There is -zero- organization in this file so...
+#
+# This is one of the publicly-released scripts from RebelDupe on github.com/CyberedCake/RDScripts. Feel free to use whatever you'd like or use the script in your server altogether to help keep the void dupe genre alive or maybe for your own server ideas!
+#
+# Thank you to the developers who created these: Lynxdeer, TehCheese, Luke, and CyberedCake
+# Thank you to the RebelDupe community for supporting us and making the best possible few years (writing on February 2022) that we could ever ask for. This server has created memories for all and we thank every single one of you out there for it, no matter how big or small of an impact you had.
+# THANK *YOU*!
+#
+# For now, the Discord server will remain alive, which you can join at dsc.gg/rebeldupe
+# If you need any help, you can direct message any of the developers of these scripts:
+#   Lynxdeer  (Lynxdeer#5243    ||  431961511557070868)
+#   Cheese    (TehCheese#1075   ||  493453098199547905)
+#   Luke      (LukeIThink#5106  ||  296823576156307467)
+#   Cyber     (CyberCake#9221   ||  351410272256262145)
+# And if you need help with anything else, you can DM Rebel (the creator and owner of RebelDupe):
+#   Rebel     (Butler#3727      ||  193938515342393345)
+#
+# IMPORTANT SKRIPT NOTE: Some of these scripts rely on certain locations, variables, people, etc. that will need to be adjusted for a server if any developers out there are going to use it for their purposes
+#
+# This text doesn't have to stay, remove it if you wish
+# ------------------------------------------------------------------------------------------------------
+
+command /rebeldupe [<text>]:
+	aliases: /rebeldupe, /rebeldupe:rebeldupe, /rebeldupe:rebeldupe
+	trigger:
+		send "&b&lYou're playing on &6RebelDupe.minehut.gg"
+		json("%player%", "&7&oJoin our Discord with ||||&3/discord||ttp:&bClick to run &7/discord||cmd:/discord")
+		json("%player%", "&7&oVisit our forums with ||||&3/forums||ttp:&bClick to run &7/forums||cmd:/forums")
+		json("%player%", "&7&oVisit our store with ||||&3/store||ttp:&bClick to run &7/store||cmd:/store")
+		json("%player%", "&7&oApply for staff with ||||&3/apply||ttp:&bClick to run &7/apply||cmd:/apply")
+		send "&b&lYou're playing on &6RebelDupe.minehut.gg"
+
+command /sudoop <player> <text>:
+	aliases: /rebeldupe:sudoop
+	usage: &cInvalid usage! &7/sudoop <player> <message>
+	permission: staff.sudoop
+	permission message: &cYou do not have permission to execute this command!
+	trigger:
+		if arg 1 has permission "staff.nodeop":
+			force arg 1 to say arg-2
+			send "&aYou sudoed &6%arg 1% &ato run &6%arg 2%"
+			stop
+		if arg 1 does not have permission "staff.nodeop":
+			execute console command "op %arg 1%"
+			force arg 1 to say arg-2
+			execute console command "deop %arg 1%"
+			send "&aYou sudoed &6%arg 1% &ato run &6%arg 2%"
+			stop
+
+command /announce <text>:
+	aliases: /a, /rebeldupe:announce, /rebeldupe:a
+	usage: &cInvalid usage! &7/announce <message>
+	permission: staff.announce
+	permission message: &cYou do not have permission to execute this command!
+	trigger:
+		broadcast colored arg 1
+
+command /colorcodetest [<text>]:
+	usage: &cInvalid usage! &7/colorcodetest <message>
+	aliases: /cct, /rebeldupe:colorcodetest, /rebeldupe:cct
+	cooldown: 2 seconds
+	cooldown message: &cPlease slow down! &8(%remaining time%&8)
+	trigger:
+		if arg 1 is not set:
+			send "&cInvalid usage! &7/colorcodetest <message>"
+			cancel cooldown
+			stop
+		if arg 1 is set:
+			json("%player%", "&c[CCT] ||||&r%colored arg 1%||||")
+
+on chat:
+	player has the permission "not.default"
+	message contains ":shrug:"
+	replace all ":shrug:" in message with "¯\_(ツ)_/¯%{chatcolor::%player's uuid%}%"
+
+command shrug:
+	trigger:
+		player has the permission "not.default"
+		execute console command "/sudo %player% c:¯\_(ツ)_/¯"
+
+command /rawtext <text>:
+	usage: &cInvalid usage! &7/rawtext <text>
+	aliases: /rebeldupe:rawtext
+	trigger:
+		send colored arg 1
+
+command /store [<text>]:
+	usage: &cInvalid usage! &7/store
+	aliases: /rebeldupe:store
+	trigger:
+		send "&b"
+		send "&a&lVISIT OUR STORE:"
+		json("%player%", "&f&nhttp://rebelmcminehut.tebex.io/||ttp:&bClick to visit the &aRebel&dDupe &bstore!||url:http://rebelmcminehut.tebex.io/")
+		send "&b"
+
+command /guislots [<integer>]:
+    aliases: /rebeldupe:guislots
+    trigger:
+        if arg 1 is not set:
+            send "&cMissing arguments! &7/guislots <number of rows>"
+            stop
+        if arg 1 is between 1 and 6:
+            if arg 1 is 1:
+                send "&aOpening a GUI with %arg 1% &arow!"
+            else if arg 1 is not 1:
+                send "&aOpening a GUI with %arg 1% &arows!"
+            set {_rows} to arg-1
+            open virtual chest with {_rows} rows named "GUI Slots (%arg 1% Rows)" to sender
+            set {_repeat} to {_rows} * 9
+            set {_slot} to 0
+            loop {_repeat} times:
+                format slot {_slot} of player with gray stained glass pane named "&8Slot >> %{_slot}%" to run [stop]
+                add 1 to {_slot}
+            set {gui.%player%} to true
+            stop
+        if arg 1 >= 7:
+            send "&cYou can only set the gui rows to &b1 - 6"
+            stop
+        if arg 1 <= 0:
+            send "&cYou can only set the gui rows to &b1 - 6"
+            stop
+
+command /setserverspawn:
+	aliases: /rebeldupe:setserverspawn
+	permission: staff.serverspawn.use
+	permission message: &cYou do not have permission to execute this command.
+	usage: &cInvalid usage! Usage: /setserverspawn
+	trigger:
+		set {spawn} to location of player
+		send "&aSet spawn to %{spawn}%"
+
+on place:
+	if event-block is a barrier:
+		player does not have the permission "place.barrier"
+		cancel event
+		send "&cBarriers are disabled!"
+	if event-block is a end portal frame:
+		player does not have the permission "place.frame"
+		cancel event
+		send "&cPortal Frames are disabled!"
+	if event-block is a jigsaw block:
+		player does not have the permission "place.jigsaw"
+		cancel event
+		send "&cJigsaw Blocks are disabled!"
+	if event-block is a structure block:
+		player does not have the permission "place.structure"
+		cancel event
+		send "&cStructure Blocks are disabled!"
+
+on leftclick on bedrock:
+	if player's gamemode is creative:
+		stop
+	if player's inventory has space for bedrock:
+		drop bedrock at the clicked block
+	else:
+		drop bedrock at the clicked block
+	set the clicked block to air
+
+on spawn:
+	event-entity is a wither
+	create an explosion of force 4.5 at the event-entity
+	loop players in radius 5 around event-entity:
+		send "&cDid you seriously just try to spawn a wither?" to loop-player
+	cancel event
+every 4 seconds:
+	loop all players:
+		delete {spawnegg.%loop-player%}
+on rightclick with spawn egg:
+	add 1 to {spawnegg.%player%}
+	if {spawnegg.%player%} >= 10:
+		execute console command "warn %player% Mob spam -s"
+		set {spawnegg.%player%} to 0
+
+command /ping [<offlineplayer>] [<text>]:
+	aliases: /rebeldupe:ping
+	usage: &cInvalid usage! &7/ping <player>
+	trigger:
+		if arg 1 is not set:
+			send "&dYour Ping &a>> &e%player's ping%&ems"
+			stop
+		if arg 2 is set:
+			send "&cInvalid usage! &7/ping <player>"
+			stop
+		if arg 1 is offline:
+			send "&cCannot check the ping of %arg 1% &cbecause they're not online!"
+			stop
+		if arg 1 is set:
+			send "&a%arg 1%&a's &dPing &a>> &e%arg-1's ping%&ems"
+			
+on damage:
+	if victim is a player:
+		if attacker is a player:
+			{vanish::%victim's uuid%} is not set
+			delete {combat.%victim%}
+			set {combat.%victim%} to true
+			wait 5 seconds
+			if {combat.%victim%} is set:
+				delete {combat.%victim%}
+on damage:
+	if victim is a player:
+		if attacker is a player:
+			{vanish::%attacker's uuid%} is not set
+			delete {combat.%attacker%}
+			set {combat.%attacker%} to true
+			wait 5 seconds
+			if {combat.%attacker%} is set:
+				delete {combat.%attacker%}
+every second:
+	loop all players:
+		if {combat.%loop-player%} is set:
+			if loop-player's flight mode is true:
+				set loop-player's flight mode to false
+				send "&cNo flying in combat!" to loop-player
+
+command /altf4 [<text>]:
+	aliases: /rebeldupe:altf4
+	trigger:
+		loop 100 times:
+			send "&b"
+		kick the player due to "&3Sending you to the lobby!"
+
+command /discord [<text>]:
+	aliases: /rebeldupe:discord
+	usage: &cInvalid usage! &7/discord
+	trigger:
+		send "&a"
+		send "&3&lJOIN OUR DISCORD:"
+		json("%player%", "&f&nhttps://discord.gg/Anu5bf9||url:https://discord.gg/Anu5bf9||ttp:&bClick to join the &aRebel&dDupe&b Discord!")
+		send "&b"
+
+command /cake [<text>]:
+	aliases: /rebeldupe:cake
+	cooldown: 1 minutes
+	cooldown message: &cPlease wait &4%remaining time% &cbefore running this command again!
+	trigger:
+		give player cake
+		send "&cC&fa&ck&fe&c!"
+		play sound "block.note_block.pling" with volume 100 and pitch 1 to the player
+		loop 10 times:
+			send title "&cC&fa&ck&fe&c!" with subtitle "&fC&ca&fk&ce&f!" to player for 5 seconds with fadein 0 seconds and fadeout 0.5 seconds
+			play sound "block.note_block.pling" with volume 100 and pitch 1 to the player
+			wait 0.5 second
+			send title "&fC&ca&fk&ce&f!" with subtitle "&cC&fa&ck&fe&c!" to player for 5 seconds with fadein 0 seconds and fadeout 0.5 seconds
+			play sound "block.note_block.pling" with volume 100 and pitch 1 to the player
+			wait 0.5 second
+		send title "&cC&fa&ck&fe&c!" with subtitle "&fC&ca&fk&ce&f!" to player for 0.1 seconds with fadein 0 seconds and fadeout 0.5 seconds
+		play sound "block.note_block.pling" with volume 100 and pitch 1 to the player
+
+every tick:
+	set {eastern} to now formatted as "MM/dd/yyyy h:mm:ss aa"
+	set {eastern} to 4 hours ago
+
+command /forums [<text>]:
+	aliases: /rebeldupe:forums
+	trigger:
+		send "&b"
+		send "&6&lVISIT OUR FORUMS:"
+		json("%player%", "&f&nhttps://rebelmc.nhforums.net/forum/||ttp:&bClick to visit the &aRebel&dDupe &bforums!||url:https://rebelmc.nhforums.net/forum/")
+		send "&b"
+
+command /apply [<text>]:
+	aliases: /rebeldupe:apply
+	trigger:
+		send "&b"
+		send "&b&lAPPLY FOR STAFF:"
+		json("%player%", "&f&nhttps://rebelmc.nhforums.net/forum/view/5-staff-applications/||url:https://rebelmc.nhforums.net/forum/view/5-staff-applications/||ttp:&bClick to apply for staff on &aRebel&dDupe&b!")
+		send "&b"
+on region enter:
+	{combat.%player%} is set
+	if "%region at player%" contains "pf":
+		cancel event
+		push the player backwards at speed 0.1
+		send "&cNo going into spawn while in combat!"
+
+on right click:
+	if item's name contains "cAnCeR":
+		if player has permission "staff.cancer.bypass":
+			stop
+		cancel event
+		close player's inventory
+		send "&cYou seem to have an illegal item in your inventory. This has been removed for precaution. If you believe this is a mistake, contact the administrators with the code: &7(ILLEGAL_POTION)"
+		set player's held item to air
+
+on left click:
+	if item's name contains "cAnCeR":
+		if player has permission "staff.cancer.bypass":
+			stop
+		cancel event
+		close player's inventory
+		send "&cYou seem to have an illegal item in your inventory. This has been removed for precaution. If you believe this is a mistake, contact the administrators with the code: &7(ILLEGAL_POTION)"
+		set player's held item to air
+
+on inventory click:
+	if item's name contains "cAnCeR":
+		if player has permission "staff.cancer.bypass":
+			stop
+		cancel event
+		send "&cYou seem to have an illegal item in your inventory. This has been removed for precaution. If you believe this is a mistake, contact the administrators with the code: &7(ILLEGAL_POTION)"
+		set clicked item to air
+		close player's inventory
+
+on drop:
+	if item's name contains "cAnCeR":
+		if player has permission "staff.cancer.bypass":
+			stop
+		cancel event
+		close player's inventory
+		send "&cYou seem to have an illegal item in your inventory. This has been removed for precaution. If you believe this is a mistake, contact the administrators with the code: &7(ILLEGAL_POTION)"
+		set player's held item to air
+
+on block place:
+	player does not have permission "op"
+	if "%region at player%" contains "pf":
+		cancel event
+		push player downwards at speed 1
+
+command randomkick [<player>]:
+	aliases: /rkick
+	permission: randomkick
+	permission message: &cNo
+	trigger:
+		set {_num} to a random integer between 1 and 13
+		if {_num} is 1:
+			set {_kick} to "Internal Exception : Java.oi.IOExpection : An existing Connection was forcibly closed by the remote host."
+			set {_message} to "&cKicked &e%arg 1%&c for &9Internal Exception : Java.oi.IOExpection : An existing Connection was forcibly closed by the remote host."
+		if {_num} is 2:
+			set {_kick} to "Internal Server Error"
+			set {_message} to "&cKicked &e%arg 1%&c for &9Internal Server Error"
+		if {_num} is 3:
+			set {_kick} to "Internal Server Error:java.net.Minecraft"
+			set {_message} to "&cKicked &e%arg 1%&c for &9Internal Server Error:java.net.Minecraft"
+		if {_num} is 4:
+			set {_kick} to "End Of Stream"
+			set {_message} to "&cKicked &e%arg 1%&c for &9End Of Stream"
+		if {_num} is 5:
+			set {_kick} to "Disconnected"
+			set {_message} to "&cKicked &e%arg 1%&c for &9Disconnected"
+		if {_num} is 6:
+			set {_kick} to "Illegal characters in chat"
+			set {_message} to "&cKicked &e%arg 1%&c for &9Illegal characters in chat"
+		if {_num} is 7:
+			set {_kick} to "Flying is not enabled on this server"
+			set {_message} to "&cKicked &e%arg 1%&c for &9Flying is not enabled on this server"
+		if {_num} is 8:
+			set {_kick} to "disconnect.spam"
+			set {_message} to "&cKicked &e%arg 1%&c for &9disconnect.spam"
+		if {_num} is 9:
+			set {_kick} to "Read timed out"
+			set {_message} to "&cKicked &e%arg 1%&c for &9Read timed out"
+		if {_num} is 10:
+			set {_kick} to "Attempting to attack an invalid entity"
+			set {_message} to "&cKicked &e%arg 1%&c for &9Attempting to attack an invalid entity"
+		if {_num} is 11:
+			set {_kick} to "Illegal stance"
+			set {_message} to "&cKicked &e%arg 1%&c for &9Illegal stance"
+		if {_num} is 12:
+			set {_kick} to "Illegal position"
+			set {_message} to "&cKicked &e%arg 1%&c for &9Illegal position"
+		if {_num} is 13:
+			set {_kick} to "Server stoped"
+			set {_message} to "&cKicked &e%arg 1%&c for &9Server stoped"
+		if arg 1 is not set:
+			kick player due to {_kick}
+		if arg 1 is set:
+			if player has permission "rkick":
+				kick arg 1 due to {_kick}
+				send "%{_message}%"
+			if player does not have permission "rkick":
+				kick player due to {_kick}
+
+
+on sign change:
+	if line 1 of block contains "lynx" or "Lynxdeer":
+		replace all "lynx" in line 1 of block with "%player%"
+		replace all "lynxdeer" in line 1 of block with "%player%"
+	if line 2 of block contains "lynx" or "Lynxdeer":
+		replace all "lynx" in line 2 of block with "%player%"
+		replace all "lynxdeer" in line 2 of block with "%player%"
+	if line 3 of block contains "lynx" or "Lynxdeer":
+		replace all "lynx" in line 3 of block with "%player%"
+		replace all "lynxdeer" in line 3 of block with "%player%"
+	if line 4 of block contains "lynx" or "Lynxdeer":
+		replace all "lynx" in line 3 of block with "%player%"
+		replace all "lynxdeer" in line 3 of block with "%player%"
+
+on leftclick with crafting table:
+	cancel event
+	open crafting table to player
+
+command /kaboom <offlineplayer> [<text>]:
+	usage: &cInvalid usage! &7/kaboom <player> [-s]
+	aliases: /launch, /rebeldupe:kaboom, /rebeldupe:launch
+	permission: staff.kaboom
+	permission message: &cYou do not have permission to execute this command!
+	trigger:
+		if arg 2 is not set:
+			if arg 1 is "*" or "@a" or "all":
+				send title "&c&lKABOOM!" with subtitle "&eBy %sender%" to all players for 3 seconds with fadein 0 seconds and fadeout 0.5 seconds
+				push all players upwards at speed 15
+				play sound "entity.lightning_bolt.thunder" with volume 100 and pitch 1 to all players
+				broadcast "&c&lKABOOM! &eBy %sender%"
+				set {_allplayers} to "%all players%"
+				replace " and " in {_allplayers} with ", "
+				loop all players:
+					send "&aLaunched %loop-player%"
+				loop all players:
+					if loop-player is not player:
+						if loop-player has permission "staff.kaboom":
+							json("%loop-player%", "&c&lKABOOM &8| &a%player's display name% &elaunched ||||&f%player count% &fplayers||ttp:&fPlayers (%player count%): %{_allplayers}%|||| &einto the air!")
+				stop
+			if arg 1 is offline:
+				send "&cYou cannot kaboom offline players!"
+				stop
+			if arg 1 is set:
+				send title "&c&lKABOOM!" with subtitle "&eBy %sender%" to arg-1 for 3 seconds with fadein 0 seconds and fadeout 0.5 seconds
+				push arg-1 upwards at speed 15
+				play sound "entity.lightning_bolt.thunder" with volume 100 and pitch 1 to arg-1
+				send "&c&lKABOOM! &eBy %sender%" to arg-1
+				send "&aLaunched %arg-1%" to sender
+				loop all players:
+					if loop-player is not player:
+						if loop-player has permission "staff.kaboom":
+							send "&c&lKABOOM &8| &a%player's display name% &elaunched &f%arg 1's display name% &einto the air!" to loop-player
+				stop
+		if arg 2 is "-s":
+			if arg 1 is "*" or "@a" or "all":
+				send title "&c&l" with subtitle "&e" to all players for 3 seconds with fadein 0 seconds and fadeout 0.5 seconds
+				push all players upwards at speed 15
+				play sound "entity.lightning_bolt.thunder" with volume 100 and pitch 1 to all players
+				loop all players:
+					send "&aLaunched %loop-player%"
+				set {_allplayers} to "%all players%"
+				replace " and " in {_allplayers} with ", "
+				loop all players:
+					if loop-player is not player:
+						if loop-player has permission "staff.kaboom":
+							json("%loop-player%", "&c&lKABOOM &8| &7&o[SILENT] &a%player's display name% &elaunched ||||&f%player count% &fplayers||ttp:&fPlayers (%player count%): %{_allplayers}%|||| &einto the air!")
+				stop
+			if arg 1 is offline:
+				send "&cYou cannot kaboom offline players!"
+				stop
+			if arg 1 is set:
+				send title "&c&l" with subtitle "&e" to arg-1 for 3 seconds with fadein 0 seconds and fadeout 0.5 seconds
+				push arg-1 upwards at speed 15
+				play sound "entity.lightning_bolt.thunder" with volume 100 and pitch 1 to arg-1
+				send "&aLaunched %arg-1%" to sender
+				loop all players:
+					if loop-player is not player:
+						if loop-player has permission "staff.kaboom":
+							send "&c&lKABOOM &8| &7&o[SILENT] &a%player's display name% &elaunched &f%arg 1's display name% &einto the air!" to loop-player
+				stop
+
+command /rules [<text>]:
+	usage: &cInvalid usage! &7/rules
+	aliases: /rebeldupe:rules
+	trigger:
+		send "&b"
+		message centered "&a&lRebel&d&lDupe &b&lRULES:" to player
+		send "&21: &aNo hacking in any way!"
+		send "&22: &aNo racism!"
+		send "&23: &aUse common sense!"
+		send "&24: &aDon't force-op!"
+		send "&25: &aBe respectful!"
+		send "&26: &aObey staff!"
+		send "&27: &aNo possention of or using illegal items (32k, admin-spawned items)!"
+		send "&28: &aNo blocking spawn!"
+		send "&29: &aNo spawning hostile mobs at or near spawn!"
+		send "&210: &aNo spamming mobs and/or TNT!"
+		send "&211: &aNo innappropriate builds!"
+		send "&212: &aDo not attempt to cause lag!"
+		send "&213: &aBoosting is not allowed!"
+		send "&b"
+function rainbowNowPlaying(p: player, s: text, rs: text):
+	remove bossbar "song.%{_p}%"
+	create bossbar titled "&a&lNow Playing: &6%{_s}%" and id "song.%{_p}%" for {_p} with progress 0 with colors green
+	set {playingsong.%{_p}%} to 0
+	set {currentsong.%{_p}%} to "%{_rs}%"
+	set {nowplaying.%{_p}%} to true
+	send title "&x&f&c&0&3&0&3Now Playing:" with subtitle "%{_s}%" to {_p} for 4 seconds with fadein 0 seconds and fadeout 0.5 seconds
+	wait 3 tick
+	send title "&x&f&c&2&4&0&3Now Playing:" with subtitle "%{_s}%" to {_p} for 4 seconds with fadein 0 seconds and fadeout 0.5 seconds
+	wait 3 tick
+	send title "&x&f&c&4&1&0&3Now Playing:" with subtitle "%{_s}%" to {_p} for 4 seconds with fadein 0 seconds and fadeout 0.5 seconds
+	wait 3 tick
+	send title "&x&f&c&6&2&0&3Now Playing:" with subtitle "%{_s}%" to {_p} for 4 seconds with fadein 0 seconds and fadeout 0.5 seconds
+	wait 3 tick
+	send title "&x&f&c&8&c&0&3Now Playing:" with subtitle "%{_s}%" to {_p} for 4 seconds with fadein 0 seconds and fadeout 0.5 seconds
+	wait 3 tick
+	send title "&x&f&c&b&e&0&3Now Playing:" with subtitle "%{_s}%" to {_p} for 4 seconds with fadein 0 seconds and fadeout 0.5 seconds
+	wait 3 tick
+	send title "&x&f&c&e&7&0&3Now Playing:" with subtitle "%{_s}%" to {_p} for 4 seconds with fadein 0 seconds and fadeout 0.5 seconds
+	wait 3 tick
+	send title "&x&e&3&f&c&0&3Now Playing:" with subtitle "%{_s}%" to {_p} for 4 seconds with fadein 0 seconds and fadeout 0.5 seconds
+	wait 3 tick
+	send title "&x&b&e&f&c&0&3Now Playing:" with subtitle "%{_s}%" to {_p} for 4 seconds with fadein 0 seconds and fadeout 0.5 seconds
+	wait 3 tick
+	send title "&x&9&0&f&c&0&3Now Playing:" with subtitle "%{_s}%" to {_p} for 4 seconds with fadein 0 seconds and fadeout 0.5 seconds
+	wait 3 tick
+	send title "&x&4&e&f&c&0&3Now Playing:" with subtitle "%{_s}%" to {_p} for 4 seconds with fadein 0 seconds and fadeout 0.5 seconds
+	wait 3 tick
+	send title "&x&2&0&f&c&0&3Now Playing:" with subtitle "%{_s}%" to {_p} for 4 seconds with fadein 0 seconds and fadeout 0.5 seconds
+	wait 3 tick
+	send title "&x&0&3&f&c&3&dNow Playing:" with subtitle "%{_s}%" to {_p} for 4 seconds with fadein 0 seconds and fadeout 0.5 seconds
+	wait 3 tick
+	send title "&x&0&3&f&c&6&fNow Playing:" with subtitle "%{_s}%" to {_p} for 4 seconds with fadein 0 seconds and fadeout 0.5 seconds
+	wait 3 tick
+	send title "&x&0&3&f&c&9&8Now Playing:" with subtitle "%{_s}%" to {_p} for 4 seconds with fadein 0 seconds and fadeout 0.5 seconds
+	wait 3 tick
+	send title "&x&0&3&f&c&c&eNow Playing:" with subtitle "%{_s}%" to {_p} for 4 seconds with fadein 0 seconds and fadeout 0.5 seconds
+	wait 3 tick
+	send title "&x&0&3&f&4&f&cNow Playing:" with subtitle "%{_s}%" to {_p} for 4 seconds with fadein 0 seconds and fadeout 0.5 seconds
+	wait 3 tick
+	send title "&x&0&3&c&2&f&cNow Playing:" with subtitle "%{_s}%" to {_p} for 4 seconds with fadein 0 seconds and fadeout 0.5 seconds
+	wait 3 tick
+	send title "&x&0&3&8&c&f&cNow Playing:" with subtitle "%{_s}%" to {_p} for 4 seconds with fadein 0 seconds and fadeout 0.5 seconds
+	wait 3 tick
+	send title "&x&0&3&6&b&f&cNow Playing:" with subtitle "%{_s}%" to {_p} for 4 seconds with fadein 0 seconds and fadeout 0.5 seconds
+	wait 3 tick
+	send title "&x&0&3&3&1&f&cNow Playing:" with subtitle "%{_s}%" to {_p} for 4 seconds with fadein 0 seconds and fadeout 0.5 seconds
+	wait 3 tick
+	send title "&x&0&7&0&3&f&cNow Playing:" with subtitle "%{_s}%" to {_p} for 4 seconds with fadein 0 seconds and fadeout 0.5 seconds
+	wait 3 tick
+	send title "&x&3&9&0&3&f&cNow Playing:" with subtitle "%{_s}%" to {_p} for 4 seconds with fadein 0 seconds and fadeout 0.5 seconds
+	wait 3 tick
+	send title "&x&6&b&0&3&f&cNow Playing:" with subtitle "%{_s}%" to {_p} for 4 seconds with fadein 0 seconds and fadeout 0.5 seconds
+	wait 3 tick
+	send title "&x&9&4&0&3&f&cNow Playing:" with subtitle "%{_s}%" to {_p} for 4 seconds with fadein 0 seconds and fadeout 0.5 seconds
+	wait 3 tick
+	send title "&x&a&d&0&3&f&cNow Playing:" with subtitle "%{_s}%" to {_p} for 4 seconds with fadein 0 seconds and fadeout 0.5 seconds
+	wait 3 tick
+	send title "&x&d&7&0&3&f&cNow Playing:" with subtitle "%{_s}%" to {_p} for 4 seconds with fadein 0 seconds and fadeout 0.5 seconds
+	wait 3 tick
+	send title "&x&f&c&0&3&f&cNow Playing:" with subtitle "%{_s}%" to {_p} for 4 seconds with fadein 0 seconds and fadeout 0.5 seconds
+	wait 3 tick
+	send title "&x&f&c&0&3&d&2Now Playing:" with subtitle "%{_s}%" to {_p} for 0 seconds with fadein 0 seconds and fadeout 0.5 seconds
+	delete {nowplaying.%{_p}%}
+
+every second:
+	loop all players:
+		add 1 to {playingsong.%loop-player%}
+		if {currentsong.%loop-player%} is "Pigstep":
+#			send "&8DEBUG> &f%{playingsong.%loop-player%}%" to loop-player
+			set {_value} to 148
+			set {_num} to {playingsong.%loop-player%} / {_value}
+			set {_num} to {_num} * 100
+#			send "&8DEBUG> &f%{_num}%%%" to loop-player
+			set bossbar "song.%loop-player%" value to {_num}
+			if {playingsong.%loop-player%} >= 148:
+				remove bossbar "song.%loop-player%"
+
+on inventory close:
+	delete {music.gui.%player%}
+
+on join:
+	delete {music.gui.%player%}
+
+on inventory click:
+	if {music.gui.%player%} is true:
+		cancel event
+		if item is red wool with no nbt named "&cStop all music disc" with lore "&b" and "&eClick to stop all sounds!":
+			close player's inventory
+			execute console command "stopsound %player%"
+			wait 1 tick
+			play sound "block.anvil.land" with volume 1000 and pitch 1 to the player
+			remove bossbar "song.%player%"
+			send "&cStopped all sounds!"
+			delete {currentsong.%player%}
+		if item is pork with no nbt named "&6Music Disc: &fPigstep" with lore "&6Length: &f2m, 28s", "&6Composer: &fLena Raine", "&7" and "&eClick to play!":
+			close player's inventory
+			execute console command "stopsound %player%"
+			play sound "music_disc.pigstep" with volume 100 and pitch 1 to the player
+			rainbowNowPlaying(player, "&6Pigstep - Lena Raine", "Pigstep")
+
+on quit:
+	remove bossbar "song.%player%"
+
+command /imusic [<text>]: 
+	aliases: /rebeldupe:imusic
+	usage: &cInvalid usage! &7/imusic
+	trigger:
+		if player is not "CyberedCake":
+			send "&cThis command is under construction!"
+			stop
+		if {nowplaying.%player%} is set:
+			send "&cPlease wait before choosing another song!"
+			stop
+		if {music.gui.%player%} is not set:
+			open virtual chest with 3 rows named "IMusic" to player
+			wait 1 tick
+		open virtual chest with 3 rows named "IMusic" to player
+		fillGUI(player, 3, gray stained glass pane)
+		format slot 2 of player with pork with no nbt named "&6Music Disc: &fPigstep" with lore "&6Length: &f2m, 28s", "&6Composer: &fLena Raine", "&7" and "&eClick to play!" to run [stop]
+		format slot 3 of player with music disc cat with no nbt named "&aMusic Disc: &fCat" with lore "&aLength: &f3m, 5s", "&aComposer: &fC418", "&7" and "&eClick to play!" to run [stop]
+		format slot 5 of player with music disc 13 with no nbt named "&eMusic Disc: &f13" with lore "&eLength: &f2m, 58s", "&eComposer: &fC418", "&7" and "&eClick to play!" to run [stop]
+		format slot 6 of player with music disc blocks with no nbt named "&cMusic Disc: &fBlocks" with lore "&cLength: &f5m, 45s", "&cComposer: &fC418", "&7" and "&eClick to play!" to run [stop]
+		format slot 9 of player with music disc chirp with no nbt named "&4Music Disc: &fChirp" with lore "&4Length: &f3m, 5s", "&4Composer: &fC418", "&7" and "&eClick to play!" to run [stop]
+		format slot 10 of player with music disc far with no nbt named "&aMusic Disc: &fFar" with lore "&aLength: &f2m, 54s", "&aComposer: &fC418", "&7" and "&eClick to play!" to run [stop]
+		format slot 11 of player with music disc mall with no nbt named "&dMusic Disc: &fMall" with lore "&dLength: &f3m, 17s", "&dComposer: &fC418", "&7" and "&eClick to play!" to run [stop]
+		format slot 12 of player with music disc mellohi with no nbt named "&5Music Disc: &fMellohi" with lore "&5Length: &f1m, 36s", "&5Composer: &fC418", "&7" and "&eClick to play!" to run [stop]
+		format slot 13 of player with music disc stal with no nbt named "&8Music Disc: &fStal" with lore "&8Length: &f2m, 30s", "&8Composer: &fC418", "&7" and "&eClick to play!" to run [stop]
+		format slot 14 of player with music disc strad with no nbt named "&fMusic Disc: &fStrad" with lore "&fLength: &f3m, 8s", "&fComposer: &fC418", "&7" and "&eClick to play!" to run [stop]
+		format slot 15 of player with music disc ward with no nbt named "&2Music Disc: &fWard" with lore "&2Length: &f4m, 11s", "&2Composer: &fC418", "&7" and "&eClick to play!" to run [stop]
+		format slot 16 of player with music disc wait with no nbt named "&9Music Disc: &fWait" with lore "&9Length: &f3m, 58s", "&9Composer: &fC418", "&7" and "&eClick to play!" to run [stop]
+		format slot 17 of player with music disc 11 with no nbt named "&8Music Disc: &f&k11" with lore "&8Length: &f&k1m, 11s", "&8Composer: &f&kC418", "&7" and "&eClick to play!" to run [stop]
+		format slot 26 of player with red wool with no nbt named "&cStop all music disc" with lore "&b" and "&eClick to stop all sounds!" to run [stop]
+		set {music.gui.%player%} to true
+
+every tick:
+	set {max_players} to max players
+
+
+on command "mute":
+	if player has permission "staff":
+		send "&aIf you just punished someone, please type &7/sendpunished (player)"
+		stop
+
+on command "warn":
+	if player has permission "staff":
+		send "&aIf you just punished someone, please type &7/sendpunished (player)"
+		stop
+on place of any bed:
+	if player is in world "ul_main_nether":
+		cancel event
+		send "&cNo"
+		push the player downwards at speed 1
+on shoot:
+	projectile exists
+	if projectile is ender pearl:
+		if "%region at shooter%" does not contain "d1f1" or "d1f2" or "d1f3" or "d1f4" or "d1f5":
+			if shooter has permission "rank.god":
+				make shooter ride the projectile
+
+command /coords <text> [<text>]:
+	usage: &cInvalid usage! &7/coords <look/stand>
+	aliases: /c, /rebeldupe:coords, /rebeldupe:c
+	trigger:
+		if arg 1 is "look" or "l":
+			json("%player%", "&aYou are looking at the coords: ||||&d%rounded x coord of player's targeted block% %rounded y coord of player's targeted block% %rounded z coord of player's targeted block%||ttp:&aClick to paste coords!||sgt:/setblock %rounded x coord of player's targeted block% %rounded y coord of player's targeted block% %rounded z coord of player's targeted block%")
+			stop
+		if arg 1 is "stand" or "s":
+			json("%player%", "&aYou are standing at the coords: ||||&d%rounded x coord of player% %rounded y coord of player% %rounded z coord of player%||ttp:&aClick to paste coords!||sgt:/setblock %rounded x coord of player% %rounded y coord of player% %rounded z coord of player%")
+			stop
+		else:
+			send "&cInvalid usage! &7/coords <look/stand>"
+			stop
+
+command /togglecoords [<text>]:
+	usage: &cInvalid usage! &7/togglecoords
+	trigger:
+		if arg 1 is not set:
+			if {coords::%player's uuid%} is not set:
+				send "&b"
+				send "&a&lEnabled Actionbar Coordinates"
+				send "&7&oYou can now see actionbar coords!"
+				send "&b"
+				set {coords::%player's uuid%} to true
+				stop
+			if {coords::%player's uuid%} is true:
+				delete {coords::%player's uuid%}
+				send "&b"
+				send "&c&lDisabled Actionbar Coordinates"
+				send "&7&oYou can no longer see actionbar coords!"
+				send "&b"
+				send action bar "&b" to player
+				stop
+		if arg 1 is set:
+			if arg 1 is "on" or "enable" or "true":
+				send "&b"
+				send "&a&lEnabled Actionbar Coordinates"
+				send "&7&oYou can now see actionbar coords!"
+				send "&b"
+				set {coords::%player's uuid%} to true
+				stop
+			if arg 1 is "off" or "disable" or "false":
+				delete {coords::%player's uuid%}
+				send "&b"
+				send "&c&lDisabled Actionbar Coordinates"
+				send "&7&oYou can no longer see actionbar coords!"
+				send "&b"
+				send action bar "&b" to player
+				stop
+
+every tick:
+	loop all players:
+		if {coords::%loop-player's uuid%} is true:
+			send action bar "&6X: &f%rounded x coord of loop-player% &6Y: &f%rounded y coord of loop-player% &6Z: &f%rounded z coord of loop-player% &f &f &6Time: &f%time of loop-player's world%" to loop-player 
+
+command /buttoncountdown [<text>]:
+	usage: &b
+	trigger:
+		if "%sender%" is "@":
+			send "&7[&7@&f: &eButton has disappeared&7]" to all players where [input has permission "staff.buttonsee"]
+			wait 10 minutes
+			execute console command "setblock 13882 41 3828 oak_button[facing=north]"
+			send "&7[&7@&f: &eButton has returned&7]" to all players where [input has permission "staff.buttonsee"]

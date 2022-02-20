@@ -1,0 +1,121 @@
+# ------------------------------------------------------------------------------------------------------
+# REBELDUPE SKRIPT
+# > bounties.sk
+#
+# This is one of the publicly-released scripts from RebelDupe on github.com/CyberedCake/RDScripts. Feel free to use whatever you'd like or use the script in your server altogether to help keep the void dupe genre alive or maybe for your own server ideas!
+#
+# Thank you to the developers who created these: Lynxdeer, TehCheese, Luke, and CyberedCake
+# Thank you to the RebelDupe community for supporting us and making the best possible few years (writing on February 2022) that we could ever ask for. This server has created memories for all and we thank every single one of you out there for it, no matter how big or small of an impact you had.
+# THANK *YOU*!
+#
+# For now, the Discord server will remain alive, which you can join at dsc.gg/rebeldupe
+# If you need any help, you can direct message any of the developers of these scripts:
+#   Lynxdeer  (Lynxdeer#5243    ||  431961511557070868)
+#   Cheese    (TehCheese#1075   ||  493453098199547905)
+#   Luke      (LukeIThink#5106  ||  296823576156307467)
+#   Cyber     (CyberCake#9221   ||  351410272256262145)
+# And if you need help with anything else, you can DM Rebel (the creator and owner of RebelDupe):
+#   Rebel     (Butler#3727      ||  193938515342393345)
+#
+# IMPORTANT SKRIPT NOTE: Some of these scripts rely on certain locations, variables, people, etc. that will need to be adjusted for a server if any developers out there are going to use it for their purposes
+#
+# This text doesn't have to stay, remove it if you wish
+# ------------------------------------------------------------------------------------------------------
+
+command /bounty [<text>] [<offlineplayer>] [<integer>] [<text>]:
+	usage: &cInvalid usage! Use &7/bounty help &cfor help!
+	cooldown: 10 ticks
+	cooldown message: &cPlease slow down! &8(%remaining time%&8)
+	aliases: /rebeldupe:bounty
+	trigger:
+		if arg 1 is not set:
+			send "&b"
+			send "&6&lBOUNTY HELP:"
+			send "&b/bounty add <player> <amount> &f- &eGive a player a bounty!"
+			send "&b/bounty check <player> &f- &eCheck if a player has a bounty!"
+			send "&c/bounty list &f- &cList all bounties and their amounts! &4[UNDER CONSTRUCTION]"
+			send "&b/bounty help &f- &ePrint this help menu!"
+			send "&b"
+		if arg 1 is set:
+			if arg 1 is "add":
+				if player does not have permission "not.default":
+					if {lastbountied::%player's uuid%} >= 1:
+						send "&cPlease wait &4%{lastbountied::%player's uuid%}% &4seconds &cbefore bounting another player!"
+						cancel cooldown
+						stop
+				if arg 2 is not set:
+					send "&cInvalid usage! &7/bounty add <player> <amount>"
+					stop
+				if arg-2 is player:
+					send "&cYou cannot bounty yourself!"
+					stop
+				if player does not have permission "staff.vanish":
+					if {vanish::%arg 2's uuid%} is true:
+						send "&cYou cannot bounty an offline player!"
+						stop
+				if arg 2 is offline:
+					send "&cYou cannot bounty an offline player!"
+					stop
+				if arg 2 is online:
+					if arg 4 is set:
+						send "&cInvalid usage! &7/bounty add <player> <amount>"
+						stop
+					if arg 3 is not set:
+						send "&cInvalid usage! &7/bounty add <player> <amount>"
+						send "&b"
+						stop
+					if player's balance < arg-3:
+						send "&cYou do not have enough money to bounty %arg 2's display name% &cfor $%arg 3%"
+						stop
+					if arg 3 is not between 100 and 100000:
+						send "&cYou can only set bounties between &b100 - 100,000"
+						stop
+					if arg 3 is set:
+						play sound "entity.player.levelup" with volume 1000 and pitch 2 to the player
+						send "&b"
+						send "&2&lBOUNTY! &eYou bountied &d%arg-2's display name% &efor &6$%arg-3%"
+						send "&b"
+						loop all players:
+							if loop-player is not player:
+								if loop-player is not arg-2:
+									play sound "entity.bat.takeoff" with volume 1000 and pitch 1 to loop-player
+									send "&b" to loop-player
+									send "&2&lBOUNTY! &e%player's display name% &ebountied &d%arg 2's display name% &efor &6$%arg 3%" to loop-player
+									send "&b" to loop-player
+							if loop-player is arg-2:
+								send "&b" to loop-player
+								send "&2&lBOUNTY! &e%player's display name% &ebountied you for &6$%arg 3%" to loop-player
+								send "&b" to loop-player
+								play sound "entity.ender_dragon.growl" with volume 1000 and pitch 1 to the loop-player
+						remove arg-3 from the player's balance
+						add arg-3 to {bounty::%arg 2's uuid%}
+						set {lastbountied::%player's uuid%} to 180
+						stop
+			if arg 1 is "check":
+				if arg 4 is set:
+					send "&cInvalid usage! &7/bounty check <player>"
+					stop
+				if arg 3 is set:
+					send "&cInvalid usage! &7/bounty check <player>"
+					stop
+				if arg 2 is not set:
+					send "&cInvalid usage! &7/bounty check <player>"
+					stop
+				if arg 3 is not set:
+					if arg 2 is set:
+						if {bounty::%arg 2's uuid%} is not set:
+							send "&b&l%arg 2%&b&l's Bounty &f-> &c$0"
+							stop
+						if {bounty::%arg 2's uuid%} is set:
+							send "&b&l%arg 2%&b&l's Bounty &f-> &e$%{bounty::%arg 2's uuid%}%"
+							stop
+			if arg 1 is "list":
+				send "&cThis command is under construction!"
+				stop
+			if arg 1 is "help":
+				make player execute command "bounty"
+				stop
+
+every second:
+	loop all players:
+		remove 1 from {lastbountied::%loop-player's uuid%}

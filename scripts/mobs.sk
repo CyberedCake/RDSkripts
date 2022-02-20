@@ -1,0 +1,81 @@
+# ------------------------------------------------------------------------------------------------------
+# REBELDUPE SKRIPT
+# > mobs.sk
+#
+# This is one of the publicly-released scripts from RebelDupe on github.com/CyberedCake/RDScripts. Feel free to use whatever you'd like or use the script in your server altogether to help keep the void dupe genre alive or maybe for your own server ideas!
+#
+# Thank you to the developers who created these: Lynxdeer, TehCheese, Luke, and CyberedCake
+# Thank you to the RebelDupe community for supporting us and making the best possible few years (writing on February 2022) that we could ever ask for. This server has created memories for all and we thank every single one of you out there for it, no matter how big or small of an impact you had.
+# THANK *YOU*!
+#
+# For now, the Discord server will remain alive, which you can join at dsc.gg/rebeldupe
+# If you need any help, you can direct message any of the developers of these scripts:
+#   Lynxdeer  (Lynxdeer#5243    ||  431961511557070868)
+#   Cheese    (TehCheese#1075   ||  493453098199547905)
+#   Luke      (LukeIThink#5106  ||  296823576156307467)
+#   Cyber     (CyberCake#9221   ||  351410272256262145)
+# And if you need help with anything else, you can DM Rebel (the creator and owner of RebelDupe):
+#   Rebel     (Butler#3727      ||  193938515342393345)
+#
+# IMPORTANT SKRIPT NOTE: Some of these scripts rely on certain locations, variables, people, etc. that will need to be adjusted for a server if any developers out there are going to use it for their purposes
+#
+# This text doesn't have to stay, remove it if you wish
+# ------------------------------------------------------------------------------------------------------
+
+
+on region enter:
+	if "%region%" contains "d1entrance":
+		if gamemode of player is survival:
+			execute console command "execute as %player% run setblock 13880 37 3837 redstone_block"
+			execute console command "execute as %player% run setblock 13880 37 3837 air"
+			wait 100 ticks
+			execute console command "execute as %player% run setblock 13886 37 3838 redstone_block"
+			execute console command "execute as %player% run setblock 13886 37 3838 air"
+			wait 30 ticks
+			execute console command "execute as %player% run setblock 13884 37 3836 redstone_block"
+			execute console command "execute as %player% run setblock 13884 37 3836 air"
+on region exit:
+	if "%region%" contains "d1f1":
+		execute console command "execute as %player% run setblock 13884 37 3836 air"
+		execute console command "execute as %player% run setblock 13886 37 3838 air"
+on region enter:
+	if "%region%" contains "d1f2":
+		if gamemode of player is survival:
+			execute console command "execute as %player% run setblock 13872 37 3837 redstone_block"
+			execute console command "execute as %player% run setblock 13872 37 3837 air"
+on block place:
+	if "%region at player%" contains "d1f1" or "d1f2" or "d1f3" or "d1f4" or "d1f5":
+		if player does not have permission "op":
+			cancel event
+			push player downwards at speed 1
+on toggling gliding:
+	if "%region at player%" contains "d1f1" or "d1f2" or "d1f3" or "d1f4" or "d1f5":
+		cancel the event
+on rightclick with ender pearl:
+	if "%region at player%" contains "d1f1" or "d1f2" or "d1f3" or "d1f4" or "d1f5":
+		cancel event
+		send "&cDisabled here!"
+
+#/summon minecraft:zombie 13880 50 3837 {Team:Mob,PersistenceRequired:1,HandItems:[{Count:1,id:diamond_sword,tag:{display:{Name:"\"Diamonds and Sticks\"",Lore:["\"..more wet than I remember....\""]},Enchantments:[{id:unbreaking,lvl:5},{id:sharpness,lvl:7},{id:fire_aspect,lvl:3},{id:knockback,lvl:3}]}},{}],ArmorItems:[{Count:1,id:chainmail_boots,tag:{display:{Name:"\"Fake Yeezy's\"",Lore:["\"I PROMISE THEY'RE REAL\""]},Enchantments:[{id:soul_speed,lvl:5},{id:protection,lvl:6},{id:feather_falling,lvl:6},{id:frost_walker,lvl:4},{id:unbreaking,lvl:5},{id:mending,lvl:3}]}},{Count:1,id:chainmail_leggings,tag:{display:{Name:"\"Little Timmy's Trousers\"",Lore:["\"Don't ask where I got these.\""]},Enchantments:[{id:blast_protection,lvl:6},{id:unbreaking,lvl:5},{id:mending,lvl:3}]}},{Count:1,id:chainmail_chestplate,tag:{display:{Name:"\"Soda Cap Chestplate\"",Lore:["\"Kinda sharp..\""]},Enchantments:[{id:protection,lvl:6},{id:unbreaking,lvl:5},{id:mending,lvl:3}]}},{Count:1,id:chainmail_helmet,tag:{display:{Name:"\"Frozen Cum Helmet\"",Lore:["\"Would not touch this if I where you..\""]},Enchantments:[{id:projectile_protection,lvl:6},{id:thorns,lvl:5},{id:unbreaking,lvl:5},{id:mending,lvl:1}]}}],CustomName:"\"Slayer\"",HandDropChances:[1.0f,0.0f],ArmorDropChances:[0.5f,0.5f,0.5f,0.5f],ActiveEffects:[{Id:5,Amplifier:0,Duration:999999},{Id:10,Amplifier:1,Duration:999999},{Id:11,Amplifier:0,Duration:999999}]}
+
+on death:
+	if attacker is a player:
+		if victim is a stray or zombie or skeleton:
+			if "%region at victim%" contains "d1f1":
+				victim's name is "dweller" or "bones" or "ogre":
+					execute console command "eco give %attacker% 100"
+on death:
+	if attacker is a player:
+		if victim is a wither skeleton:
+			if "%region at victim%" contains "d1f5":
+				victim's name is "The Anti-God":
+					execute console command "eco give %attacker% 5000"
+					wait 100 ticks
+					execute console command "sudoop %attacker% /tp 65434 50 7544"
+
+on death:
+	if attacker is a player:
+		if victim is a stray or zombie or skeleton:
+			if "%region at victim%" contains "dungeon3":
+				victim's name is "Crew":
+					execute console command "eco give %attacker% 150"

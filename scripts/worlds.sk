@@ -1,0 +1,208 @@
+# ------------------------------------------------------------------------------------------------------
+# REBELDUPE SKRIPT
+# > worlds.sk
+#
+# This is one of the publicly-released scripts from RebelDupe on github.com/CyberedCake/RDScripts. Feel free to use whatever you'd like or use the script in your server altogether to help keep the void dupe genre alive or maybe for your own server ideas!
+#
+# Thank you to the developers who created these: Lynxdeer, TehCheese, Luke, and CyberedCake
+# Thank you to the RebelDupe community for supporting us and making the best possible few years (writing on February 2022) that we could ever ask for. This server has created memories for all and we thank every single one of you out there for it, no matter how big or small of an impact you had.
+# THANK *YOU*!
+#
+# For now, the Discord server will remain alive, which you can join at dsc.gg/rebeldupe
+# If you need any help, you can direct message any of the developers of these scripts:
+#   Lynxdeer  (Lynxdeer#5243    ||  431961511557070868)
+#   Cheese    (TehCheese#1075   ||  493453098199547905)
+#   Luke      (LukeIThink#5106  ||  296823576156307467)
+#   Cyber     (CyberCake#9221   ||  351410272256262145)
+# And if you need help with anything else, you can DM Rebel (the creator and owner of RebelDupe):
+#   Rebel     (Butler#3727      ||  193938515342393345)
+#
+# IMPORTANT SKRIPT NOTE: Some of these scripts rely on certain locations, variables, people, etc. that will need to be adjusted for a server if any developers out there are going to use it for their purposes
+#
+# This text doesn't have to stay, remove it if you wish
+# ------------------------------------------------------------------------------------------------------
+
+# Config:
+options:
+
+#   /WORLDS COMMAND:
+
+#   Permission for /worlds. If you would not like a permission, write "no permission" in the blank (CASE SENSITIVE)
+#   Default: worlds.use
+    WORLDS-PERMISSION: no permission
+
+#   Permission that allows you to click on the message to teleport using multiverse. If you would not like a permission, write "no permission" in the blank (CASE SENSITIVE)
+#   Default: worlds.teleport
+    TELEPORT-PERMISSION: worlds.teleport
+
+#   Permission that lets players do /wfind <player>. If you would not like a permission, write "no permission" in the blank (CASE SENSITIVE)
+#   Default: worlds.find
+    WFIND-PERMISSION: no permission
+
+
+# Code:
+
+# vvv DO NOT CHANGE
+
+options:
+    VER: 1.0.0
+
+# ^^^ DO NOT CHANGE
+
+command /worlds [<text>] [<text>]:
+    aliases: /rebeldupe:worlds
+    trigger:
+        if "{@WORLDS-PERMISSION}" is not "no permission":
+            if player does not have permission "{@WORLDS-PERMISSION}":
+                send "&cYou do not have permission to execute this command!"
+                stop
+        if arg 1 is not set:
+            if arg 2 is not set:
+                send "&b"
+                send "&b&lWORLDS:"
+                loop all worlds:
+                    delete {%loop-value%.wrld}
+                    delete {players.%loop-value%::*}
+                loop all players:
+                    loop all worlds:
+                        if loop-player's world is "%loop-value-2%":
+                            add 1 to {%loop-value-2%.wrld}
+                            add "%loop-player%" to {players.%loop-value-2%::*}
+                loop all worlds:
+                    if {%loop-value%.wrld} is not set:
+                        add " " to {players.%loop-value%::*}
+                        set {%loop-value%.wrld} to 0
+                if "{@TELEPORT-PERMISSION}" is not "no permission":
+                    if player has permission "{@TELEPORT-PERMISSION}":
+                        loop all worlds:
+                            json("%player%", "&a❖ %loop-value%||ttp:Players (%{%loop-value%.wrld}%): &f%{players.%loop-value%::*}%||cmd:/worlds teleport %loop-value%")
+                    if player does not have permission "{@TELEPORT-PERMISSION}":
+                        loop all worlds:
+                            json("%player%", "&a❖ %loop-value%||ttp:Players (%{%loop-value%.wrld}%): &f%{players.%loop-value%::*}%")
+                if "{@TELEPORT-PERMISSION}" is "no permission":
+                    loop all worlds:
+                        json("%player%", "&a❖ %loop-value%||ttp:Players (%{%loop-value%.wrld}%): &f%{players.%loop-value%::*}%||cmd:/worlds teleport %loop-value%")
+                send "&b"
+                json("%player%", "&7&oHover over a world for the player count!")
+                if "{@TELEPORT-PERMISSION}" is not "no permission":
+                    if player has permission "{@TELEPORT-PERMISSION}":
+                        send "&7&oClick on a world to teleport to it!"
+                if "{@TELEPORT-PERMISSION}" is "no permission":
+                    send "&7&oClick on a world to teleport to it!"
+                send "&b"
+                stop
+        if arg 1 is "bug":
+            send "&b"
+            send "&6&lIF YOU FOUND A BUG IN WORLDS:"
+            send "&ePlease contact the creator on Discord or Twitter:"
+            json("%player%", "&3Discord: &fCyberCake##9221||sgt:/Submit bug report through Discord: CyberCake##9221||ttp:&bClick to paste Cyber's Discord in chat")
+            json("%player%", "&bTwitter: &f@trueCyberCake||sgt:/Submit bug report through Twitter: @trueCyberCake||ttp:&bClick to paste Cyber's Twitter in chat")
+            send "&b"
+            stop
+        if arg 1 is "info" or "ver" or "version" or "author" or "creator":
+            send "&b"
+            send "&6&lWORLDS INFO:"
+            send "&bVersion&f: &e{@VER}"
+            send "&bAuthor&f: &eCyberCake"
+            send "&b"
+            stop
+        if arg 1 is "help":
+            send "&b"
+            send "&6&lWORLDS HELP: &7&oClick a command to paste it in chat!"
+            if "{@TELEPORT-PERMISSION}" is not "no permission":
+                if player has permission "{@TELEPORT-PERMISSION}":
+                    json("%player%", "||||&b/worlds||ttp:&bClick to paste &d/worlds &bin the chat box!||sgt:/worlds|||| &f- &eList all worlds. Hover for their player counts. Click to teleport to them.")
+                if player does not have permission "{@TELEPORT-PERMISSION}":
+                    json("%player%", "||||&b/worlds||ttp:&bClick to paste &d/worlds &bin the chat box!||sgt:/worlds|||| &f- &eList all worlds. Hover for their player counts.")
+            if "{@TELEPORT-PERMISSION}" is "no permission":
+                json("%player%", "||||&b/worlds||ttp:&bClick to paste &d/worlds &bin the chat box!||sgt:/worlds|||| &f- &eList all worlds. Hover for their player counts. Click to teleport to them.")
+            if "{@WFIND-PERMISSION}" is not "no permission":
+                if player has permission "{@WFIND-PERMISSION}":
+                    if "{@TELEPORT-PERMISSION}" is not "no permission":
+                        if player does not have permission "{@TELEPORT-PERMISSION}":
+                            json("%player%", "||||&b/wfind <player>||ttp:&bClick to paste &d/wfind <player> &bin the chat box!||sgt:/wfind <player>|||| &f- &eFind a world that a player is in.")
+                        if player has permission "{@TELEPORT-PERMISSION}":
+                            json("%player%", "||||&b/wfind <player>||ttp:&bClick to paste &d/wfind <player> &bin the chat box!||sgt:/wfind <player>|||| &f- &eFind a world that a player is in. Click on the world to teleport to it.")
+                    if "{@TELEPORT-PERMISSION}" is "no permission":
+                        json("%player%", "||||&b/wfind <player>||ttp:&bClick to paste &d/wfind <player> &bin the chat box!||sgt:/wfind <player>|||| &f- &eFind a world that a player is in. Click on the world to teleport to it.")
+            if "{@WFIND-PERMISSION}" is "no permission":
+                if "{@TELEPORT-PERMISSION}" is not "no permission":
+                    if player does not have permission "{@TELEPORT-PERMISSION}":
+                        json("%player%", "||||&b/wfind <player>||ttp:&bClick to paste &d/wfind <player> &bin the chat box!||sgt:/wfind <player>|||| &f- &eFind a world that a player is in.")
+                    if player has permission "{@TELEPORT-PERMISSION}":
+                        json("%player%", "||||&b/wfind <player>||ttp:&bClick to paste &d/wfind <player> &bin the chat box!||sgt:/wfind <player>|||| &f- &eFind a world that a player is in. Click on the world to teleport to it.")
+                if "{@TELEPORT-PERMISSION}" is "no permission":
+                    json("%player%", "||||&b/wfind <player>||ttp:&bClick to paste &d/wfind <player> &bin the chat box!||sgt:/wfind <player>|||| &f- &eFind a world that a player is in. Click on the world to teleport to it.")
+            json("%player%", "&b/worlds bug||ttp:&bClick to paste &d/worlds bug &bin the chat box!||sgt:/worlds bug|||| &f- &eFound a bug? Report it to the creator!")
+            json("%player%", "&b/worlds info||ttp:&bClick to paste &d/worlds info &bin the chat box!||sgt:/worlds bug|||| &f- &eInformation on the worlds script.")
+            json("%player%", "&b/worlds help||ttp:&bClick to paste &d/worlds help &bin the chat box!||sgt:/worlds help|||| &f- &ePrint this help screen.")
+            send "&b"
+            stop
+        if arg 1 is "teleport" or "tp":
+            if "{@TELEPORT-PERMISSION}" is not "no permission":
+                if player does not have permission "{@TELEPORT-PERMISSION}":
+                    send "&cYou do not have permission to teleport to worlds!"
+                    stop
+            loop all worlds:
+                add 1 to {totaltries.wrlds.%player%}
+            loop all worlds:
+                if {totaltries.wrlds.%player%} = {tries.wrlds.%player%}:
+                    send "&cWe could not find a world by that name: %arg 2%"
+                    stop
+                if loop-value is not arg-2:
+                    add 1 to {tries.wrlds.%player%} 
+                if loop-value is arg-2:
+                    add 1 to {tries.wrlds.%player%}
+            if arg 2 is not set:
+                send "&cMissing arguments! &7/worlds teleport <world>"
+                stop
+            if arg 2 is set:
+                send "&aSending you to %arg-2%&a..."
+                wait 2 ticks
+                execute console command "mvtp %player% %arg-2%"
+                wait 2 ticks
+                execute console command "mvconfirm"
+                send "&b"
+                stop
+        else if arg 2 is set:
+            send "&cUnknown sub command: %arg-1% &c%arg-2%"
+            stop
+        else if arg 1 is set:
+            send "&cUnknown sub command: %arg-1%"
+
+command /wfind [<offlineplayer>]:
+    aliases: /rebeldupe:wfind
+    trigger:
+        if "{@WFIND-PERMISSION}" is not "no permission":
+            if player does not have permission "{@WFIND-PERMISSION}":
+                send "&cYou do not have permission to execute this command!"
+                stop
+        if arg 1 is not set:
+            send "&cMissing arguments! &7/wfind <player>"
+            stop
+        if arg 1 is set:
+            if {worlds.joined.%arg 1%} is not set:
+                send "&cCouldn't find a player by the name of %arg 1%"
+                stop
+            if {worlds.joined.%arg 1%} is set:
+                if {lastquit.%arg 1%} is set:
+                    send "&b%arg 1% &3was last seen on &b%{lastquit.%player%}%"
+                    stop
+                if {lastquit.%arg 1%} is not set:
+                    if "{@TELEPORT-PERMISSION}" is not "no permission":
+                        if player does not have permission "{@TELEPORT-PERMISSION}":
+                            json("%player%", "&b%arg 1% &3is on the world [||||&b%arg 1's world%&3||ttp:&cYou don't have permission to teleport to %arg 1's world%||||]")
+                            stop
+                        if player has permission "{@TELEPORT-PERMISSION}":
+                            json("%player%", "&b%arg 1% &3is on the world [||||&b%arg 1's world%&3||ttp:&3Click to teleport to &b%arg 1's world%||cmd:/worlds teleport %arg 1's world%||||]")
+                            stop
+                    if "{@TELEPORT-PERMISSION}" is "no permission":
+                        json("%player%", "&b%arg 1% &3is on the world [||||&b%arg 1's world%&3||ttp:&3Click to teleport to &b%arg 1's world%||cmd:/worlds teleport %arg 1's world%||||]")
+            
+
+on join:
+    set {worlds.joined.%player%} to true
+    delete {lastquit.%player%}
+
+on quit:
+    set {lastquit.%player%} to now formatted as "MM/dd/yyyy HH:mm:ss"

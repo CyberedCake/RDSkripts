@@ -1,0 +1,472 @@
+# ------------------------------------------------------------------------------------------------------
+# REBELDUPE SKRIPT
+# > playerinfo.sk
+#
+# This is one of the publicly-released scripts from RebelDupe on github.com/CyberedCake/RDScripts. Feel free to use whatever you'd like or use the script in your server altogether to help keep the void dupe genre alive or maybe for your own server ideas!
+#
+# Thank you to the developers who created these: Lynxdeer, TehCheese, Luke, and CyberedCake
+# Thank you to the RebelDupe community for supporting us and making the best possible few years (writing on February 2022) that we could ever ask for. This server has created memories for all and we thank every single one of you out there for it, no matter how big or small of an impact you had.
+# THANK *YOU*!
+#
+# For now, the Discord server will remain alive, which you can join at dsc.gg/rebeldupe
+# If you need any help, you can direct message any of the developers of these scripts:
+#   Lynxdeer  (Lynxdeer#5243    ||  431961511557070868)
+#   Cheese    (TehCheese#1075   ||  493453098199547905)
+#   Luke      (LukeIThink#5106  ||  296823576156307467)
+#   Cyber     (CyberCake#9221   ||  351410272256262145)
+# And if you need help with anything else, you can DM Rebel (the creator and owner of RebelDupe):
+#   Rebel     (Butler#3727      ||  193938515342393345)
+#
+# IMPORTANT SKRIPT NOTE: Some of these scripts rely on certain locations, variables, people, etc. that will need to be adjusted for a server if any developers out there are going to use it for their purposes
+#
+# This text doesn't have to stay, remove it if you wish
+# ------------------------------------------------------------------------------------------------------
+
+on join:
+    set {joined.date.%player%} to "Online"
+    loop {chatlogs.%player%::*}:
+        delete {total.chat.%loop-value%.%player%}
+        delete {time.%loop-value%}
+    loop {commandlogs.%player%::*}:
+        delete {total.cmd.%loop-value%.%player%}
+        delete {time.%loop-value%}
+    delete {chatlogs.%player%::*}
+    delete {commandlogs.%player%::*}
+    set {online.%player%} to true
+    set {joined.%player%} to true
+    delete {chatmsg.gui.%player%}
+
+on quit:
+    set {quit.position.x.%player%} to rounded x coordinate of player
+    set {quit.position.y.%player%} to rounded y coordinate of player
+    set {quit.position.z.%player%} to rounded z coordinate of player
+    set {joined.date.%player%} to now formatted as "MM/dd/yyyy HH:mm:ss"
+    delete {online.%player%}
+
+on inventory close:
+    delete {gui.%player%}
+    delete {pinfo.gui.%player%}
+
+on chat:
+    if {chatlogs.%player%::*} contains message:
+        if {total.chat.%message%.%player%} is not set:
+            add 1 to {total.chat.%message%.%player%}
+        add 1 to {total.chat.%message%.%player%}
+        stop
+    add message to {chatlogs.%player%::*}
+    set {time.%message%} to now formatted as "MM/dd/yyyy HH:mm:ss"
+
+on command:
+    if {commandlogs.%player%::*} contains complete command:
+        if {total.cmd.%complete command%.%player%} is not set:
+            add 1 to {total.cmd.%complete command%.%player%}
+        add 1 to {total.cmd.%complete command%.%player%}
+        stop
+    add complete command to {commandlogs.%player%::*}
+    set {time.%complete command%} to now formatted as "MM/dd/yyyy HH:mm:ss"
+
+on inventory close:
+    delete {pickplayer.pinfo.%player%}
+
+on inventory click:
+    if {gui.%player%} is true:
+        cancel event
+        if {pinfo.gui.%player%} is true:
+            if item is ender pearl:
+                if {online.%{pinfo.%player%}%} is not set:
+                    close player's inventory
+                    send "&eYou teleported to &b%{pinfo.%player%}%&e's logout position!"
+                    execute console command "minecraft:tp %player% %{quit.position.x.%{pinfo.%player%}%}% %{quit.position.y.%{pinfo.%player%}%}% %{quit.position.z.%{pinfo.%player%}%}%"
+                    play sound "entity.enderman.teleport" with volume 2 and pitch 1 to the player
+                    stop
+                if {online.%{pinfo.%player%}%} is true:
+                    close player's inventory
+                    send "&eYou teleported to &b%{pinfo.%player%}%"
+                    execute console command "minecraft:tp %player% %{pinfo.%player%}%"
+                    play sound "entity.enderman.teleport" with volume 2 and pitch 1 to the player
+                    stop
+            if item is paper:
+                set {playertotalpage.%player%} to 0
+                set {totalchatlogs.%player%} to 0
+                set {playercurrentpage.%player%} to 0
+                play sound "ui.button.click" with volume 2 and pitch 1 to the player
+                loop {chatlogs.%{pinfo.%player%}%::*}:
+                    add 1 to {totalchatlogs.%player%}
+                loop {chatlogs.%{pinfo.%player%}%::*}:
+                    set {playertotalpage.%player%} to rounded up {totalchatlogs.%player%} / 45
+                set {playercurrentpage.%player%} to 1
+                open virtual chest inventory with size 6 named "%{pinfo.%player%}%'s Chat Logs (%{playercurrentpage.%player%}%/%{playertotalpage.%player%}%)" to player
+                set {_slot} to 0
+                if {playertotalpage.%player%} is not set:
+                    format slot 22 of player with red stained glass pane named "&cNo chat history found for %{pinfo.disp.%player%}%" to run [stop]
+                set {_slot} to 45
+                loop 9 times:
+                    format slot {_slot} of player with gray stained glass pane named "&b" to run [stop]
+                    add 1 to {_slot}
+                if {playertotalpage.%player%} > {playercurrentpage.%player%}:
+                    format slot 53 of player with book with no nbt named "&r&eView Next Page" to run [stop]
+                if {playercurrentpage.%player%} is not 1:
+                    format slot 45 of player with book with no nbt named "&r&eView Previous Page" to run [stop]
+                set {_slot} to 0
+                loop {chatlogs.%{pinfo.%player%}%::*}:
+                    if {totalchatlogs.%{pinfo.%player%}%} < 45:
+                        format slot {_slot} of player with paper named "&b%{pinfo.disp.%player%}% on %{time.%loop-value%}%" with lore "&7%loop-value%" to run [stop]
+                        add 1 to {_slot}
+                    if {totalchatlogs.%{pinfo.%player%}%} >= 45:
+                        format slot {_slot} of player with paper named "&b%{pinfo.disp.%player%}% on %{time.%loop-value%}%" with lore "&7%loop-value%" to run [stop]
+                        add 1 to {_slot}
+                    if {_slot} >= 45:
+                        stop loop
+                format slot 49 of player with arrow named "&aGo Back" with lore "&7To Information on %{pinfo.disp.%player%}%" to run [stop]
+                format slot 48 of player with clock with no nbt named "&aRefresh chat messages" with lore "&7For %{pinfo.disp.%player%}%" to run [stop]
+                set {gui.%player%} to true
+        if item is book named "&eView Next Page":
+            if {gui.%player%} is true:
+                play sound "ui.button.click" with volume 2 and pitch 1 to the player
+                add 1 to {playercurrentpage.%player%}
+                open virtual chest inventory with size 6 named "%{pinfo.%player%}%'s Chat Logs (%{playercurrentpage.%player%}%/%{playertotalpage.%player%}%)" to player
+                set {_slot} to 0
+                if {chatlogs.%{pinfo.%player%}%::*} is not set:
+                    format slot 22 of player with red stained glass pane named "&cNo chat message history found for %{pinfo.disp.%player%}%" to run [stop]
+                set {_slot} to 45
+                loop 9 times:
+                    format slot {_slot} of player with gray stained glass pane named "&b" to run [stop]
+                    add 1 to {_slot}
+                if {playertotalpage.%player%} > {playercurrentpage.%player%}:
+                    format slot 53 of player with book named "&eView Next Page" to run [stop]
+                if {playercurrentpage.%player%} is not 1:
+                    format slot 45 of player with book named "&eView Previous Page" to run [stop]
+                set {_slot} to 0
+                loop 45 times:
+                    format slot {_slot} of player with air to run [stop]
+                    add 1 to {_slot}
+                set {_amount1} to 45 * {playercurrentpage.%player%} - 45 + 1
+                set {_amount2} to 45 * {playercurrentpage.%player%} + 1
+                set {_slot} to 0
+                loop {chatlogs.%{pinfo.%player%}%::*}:
+                    add 1 to {_total}
+                    if {_total} is between {_amount1} and {_amount2}:
+                        format slot {_slot} of player with paper named "&b%{pinfo.disp.%player%}% on %{time.%loop-value%}%" with lore "&7%loop-value%" to run [stop]
+                        add 1 to {_slot}
+                    if {_slot} >= 45:
+                        stop loop
+                format slot 49 of player with arrow named "&aGo Back" with lore "&7To Information on %{pinfo.disp.%player%}%" to run [stop]
+                format slot 48 of player with clock with no nbt named "&aRefresh chat messages" with lore "&7For %{pinfo.disp.%player%}%" to run [stop]
+                set {gui.%player%} to true  
+        if item is book named "&eView Previous Page":
+            if {gui.%player%} is true:
+                play sound "ui.button.click" with volume 2 and pitch 1 to the player
+                remove 1 from {playercurrentpage.%player%}
+                open virtual chest inventory with size 6 named "%{pinfo.%player%}%'s Chat Logs (%{playercurrentpage.%player%}%/%{playertotalpage.%player%}%)" to player
+                set {_slot} to 0
+                if {chatlogs.%{pinfo.%player%}%::*} is not set:
+                    format slot 22 of player with red stained glass pane named "&cNo chat message history found for %{pinfo.disp.%player%}%" to run [stop]
+                set {_slot} to 45
+                loop 9 times:
+                    format slot {_slot} of player with gray stained glass pane named "&b" to run [stop]
+                    add 1 to {_slot}
+                if {playertotalpage.%player%} > {playercurrentpage.%player%}:
+                    format slot 53 of player with book named "&eView Next Page" to run [stop]
+                if {playercurrentpage.%player%} is not 1:
+                    format slot 45 of player with book named "&eView Previous Page" to run [stop]
+                set {_slot} to 0
+                loop 45 times:
+                    format slot {_slot} of player with air to run [stop]
+                    add 1 to {_slot}
+                set {_amount1} to 45 * {playercurrentpage.%player%} - 45 + 1
+                set {_amount2} to 45 * {playercurrentpage.%player%} + 1
+                set {_slot} to 0
+                loop {chatlogs.%{pinfo.%player%}%::*}:
+                    add 1 to {_total}
+                    if {_total} is between {_amount1} and {_amount2}:
+                        format slot {_slot} of player with paper named "&b%{pinfo.disp.%player%}% on %{time.%loop-value%}%" with lore "&7%loop-value%" to run [stop]
+                        add 1 to {_slot}
+                    if {_slot} >= 45:
+                        stop loop
+                format slot 49 of player with arrow named "&aGo Back" with lore "&7To Information on %{pinfo.disp.%player%}%" to run [stop]
+                format slot 48 of player with clock with no nbt named "&aRefresh chat messages" with lore "&7For %{pinfo.disp.%player%}%" to run [stop]
+                set {gui.%player%} to true  
+        if item is clock with no nbt named "&aRefresh chat messages" with lore "&7For %{pinfo.%player%}%":
+            play sound "item.book.page_turn" with volume 1000 and pitch 1 to the player
+            close player's inventory
+            send "&bRefreshing %{pinfo.%player%}%&b's chat messages..."
+            if {gui.%player%} is not set:
+                play sound "item.book.page_turn" with volume 2 and pitch 1 to the player
+                open virtual chest inventory with size 6 named "%{pinfo.%player%}%'s Chat Logs (%{playercurrentpage.%player%}%/%{playertotalpage.%player%}%)" to player
+                set {_slot} to 0
+                if {chatlogs.%{pinfo.%player%}%::*} is not set:
+                    format slot 22 of player with red stained glass pane named "&cNo chat message history found for %{pinfo.disp.%player%}%" to run [stop]
+                set {_slot} to 45
+                loop 9 times:
+                    format slot {_slot} of player with gray stained glass pane named "&b" to run [stop]
+                    add 1 to {_slot}
+                if {playertotalpage.%player%} > {playercurrentpage.%player%}:
+                    format slot 53 of player with book named "&eView Next Page" to run [stop]
+                if {playercurrentpage.%player%} is not 1:
+                    format slot 45 of player with book named "&eView Previous Page" to run [stop]
+                set {_slot} to 0
+                loop 45 times:
+                    format slot {_slot} of player with air to run [stop]
+                    add 1 to {_slot}
+                set {_amount1} to 45 * {playercurrentpage.%player%} - 45 + 1
+                set {_amount2} to 45 * {playercurrentpage.%player%} + 1
+                set {_slot} to 0
+                loop {chatlogs.%{pinfo.%player%}%::*}:
+                    add 1 to {_total}
+                    if {_total} is between {_amount1} and {_amount2}:
+                        format slot {_slot} of player with paper named "&b%{pinfo.disp.%player%}% on %{time.%loop-value%}%" with lore "&7%loop-value%" to run [stop]
+                        add 1 to {_slot}
+                    if {_slot} >= 45:
+                        stop loop
+                format slot 49 of player with arrow named "&aGo Back" with lore "&7To Information on %{pinfo.disp.%player%}%" to run [stop]
+                format slot 48 of player with clock with no nbt named "&aRefresh chat messages" with lore "&7For %{pinfo.disp.%player%}%" to run [stop]
+                set {gui.%player%} to true  
+        if item is arrow named "&aGo Back" with lore "&7To Information on %{pinfo.%player%}%":
+            play sound "ui.button.click" with volume 2 and pitch 1 to the player
+            make player execute command "pinfo %{pinfo.%player%}%"
+            wait 1 tick
+            set {gui.%player%} to true
+        if item is diamond helmet with no nbt named "&b%{pinfo.disp.%player%}%&b's Inventory" with lore "&7View %{pinfo.%player%}%&7's inventory", "&7" and "&eClick to view!":
+            play sound "ui.button.click" with volume 2 and pitch 1 to the player
+            make player execute command "invsee %{pinfo.%player%}%"
+            set {gui.%player%} to true
+        if item is ender chest with no nbt named "&b%{pinfo.disp.%player%}%&b's Ender Chest" with lore "&7View %{pinfo.%player%}%&7's ender chest", "&7" and "&eClick to view!":
+            play sound "block.ender_chest.open" with volume 2 and pitch 1 to the player
+            open virtual chest inventory with size 4 named "%{pinfo.%player%}%'s Ender Chest" to sender
+            set {_slot} to 0
+            set {_eslot} to 0
+            loop 27 times:
+                set {_item} to slot {_eslot} in {pinfo.%player%}'s ender chest
+                format slot {_eslot} of player with {_item} to run [stop]
+                add 1 to {_slot}
+            set {gui.%player%} to true
+            set {_slot} to 27
+            loop 9 times:
+                format slot {_slot} of player with gray stained glass pane named "&b" to run [stop]
+                add 1 to {_slot}
+            format slot 31 of player with arrow named "&aGo Back" with lore "&7To Information on %{pinfo.disp.%player%}%" to run [stop]
+        if item is command block named "&b%{pinfo.disp.%player%}%&b's Command Logs" with lore "&7Note: Will not update whilst you're in the GUI", "&7" and "&eClick to view command logs!":
+            if {joined.%player%} is set:
+                set {playertotalpage.cmd.%player%} to 0
+                set {totalcmdlogs.%player%} to 0
+                set {playercurrentpage.cmd.%player%} to 0
+                play sound "ui.button.click" with volume 2 and pitch 1 to the player
+                loop {commandlogs.%{pinfo.%player%}%::*}:
+                    add 1 to {totalcmdlogs.%player%}
+                loop {commandlogs.%{pinfo.%player%}%::*}:
+                    set {playertotalpage.cmd.%player%} to rounded up {totalcmdlogs.%player%} / 45
+                set {playercurrentpage.%player%} to 1
+                open virtual chest inventory with size 6 named "%{pinfo.%player%}%'s CMD Logs (%{playercurrentpage.%player%}%/%{playertotalpage.cmd.%player%}%)" to player
+                set {_slot} to 0
+                if {playertotalpage.cmd.%player%} is not set:
+                    format slot 22 of player with red stained glass pane named "&cNo command history found for %{pinfo.disp.%player%}%" to run [stop]
+                set {_slot} to 45
+                loop 9 times:
+                    format slot {_slot} of player with gray stained glass pane named "&b" to run [stop]
+                    add 1 to {_slot}
+                if {playertotalpage.cmd.%player%} > {playercurrentpage.%player%}:
+                    format slot 53 of player with book with no nbt named "&r&eView Next Page" to run [stop]
+                if {playercurrentpage.%player%} is not 1:
+                    format slot 45 of player with book with no nbt named "&r&eView Previous Page" to run [stop]
+                set {_slot} to 0
+                loop {commandlogs.%{pinfo.%player%}%::*}:
+                    if {totalcmdlogs.%{pinfo.%player%}%} < 45:
+                        format slot {_slot} of player with paper named "&b%{pinfo.disp.%player%}% on %{time.%loop-value%}%" with lore "&7/%loop-value%" to run [stop]
+                        add 1 to {_slot}
+                    if {totalcmdlogs.%{pinfo.%player%}%} >= 45:
+                        format slot {_slot} of player with paper named "&b%{pinfo.disp.%player%}% on %{time.%loop-value%}%" with lore "&7/%loop-value%" to run [stop]
+                        add 1 to {_slot}
+                    if {_slot} >= 45:
+                        stop loop
+                format slot 49 of player with arrow named "&aGo Back" with lore "&7To Information on %{pinfo.disp.%player%}%" to run [stop]
+                format slot 48 of player with clock with no nbt named "&aRefresh command log" with lore "&7For %{pinfo.disp.%player%}%" to run [stop]
+                set {gui.%player%} to true
+        if item is book with no nbt named "&r&eView Next Page":
+            if {gui.%player%} is true:
+                play sound "ui.button.click" with volume 2 and pitch 1 to the player
+                add 1 to {playercurrentpage.%player%}
+                open virtual chest inventory with size 6 named "%{pinfo.%player%}%'s CMD Logs (%{playercurrentpage.%player%}%/%{playertotalpage.cmd.%player%}%)" to player
+                set {_slot} to 0
+                if {commandlogs.%{pinfo.%player%}%::*} is not set:
+                    format slot 22 of player with red stained glass pane named "&cNo command history found for %{pinfo.disp.%player%}%" to run [stop]
+                set {_slot} to 45
+                loop 9 times:
+                    format slot {_slot} of player with gray stained glass pane named "&b" to run [stop]
+                    add 1 to {_slot}
+                if {playertotalpage.cmd.%player%} > {playercurrentpage.%player%}:
+                    format slot 53 of player with book with no nbt named "&r&eView Next Page" to run [stop]
+                if {playercurrentpage.%player%} is not 1:
+                    format slot 45 of player with book with no nbt named "&r&eView Previous Page" to run [stop]
+                set {_slot} to 0
+                loop 45 times:
+                    format slot {_slot} of player with air to run [stop]
+                    add 1 to {_slot}
+                set {_amount1} to 45 * {playercurrentpage.%player%} - 45 + 1
+                set {_amount2} to 45 * {playercurrentpage.%player%} + 1
+                set {_slot} to 0
+                loop {commandlogs.%{pinfo.%player%}%::*}:
+                    add 1 to {_total}
+                    if {_total} is between {_amount1} and {_amount2}:
+                        format slot {_slot} of player with paper named "&b%{pinfo.disp.%player%}% on %{time.%loop-value%}%" with lore "&7/%loop-value%" to run [stop]
+                        add 1 to {_slot}
+                    if {_slot} >= 45:
+                        stop loop
+                format slot 49 of player with arrow named "&aGo Back" with lore "&7To Information on %{pinfo.disp.%player%}%" to run [stop]
+                format slot 48 of player with clock with no nbt named "&aRefresh command log" with lore "&7For %{pinfo.disp.%player%}%" to run [stop]
+                set {gui.%player%} to true  
+        if item is book with no nbt named "&r&eView Previous Page":
+            if {gui.%player%} is true:
+                play sound "ui.button.click" with volume 2 and pitch 1 to the player
+                remove 1 from {playercurrentpage.%player%}
+                open virtual chest inventory with size 6 named "%{pinfo.%player%}%'s CMD Logs (%{playercurrentpage.%player%}%/%{playertotalpage.cmd.%player%}%)" to player
+                set {_slot} to 0
+                if {commandlogs.%{pinfo.%player%}%::*} is not set:
+                    format slot 22 of player with red stained glass pane named "&cNo command history found for %{pinfo.disp.%player%}%" to run [stop]
+                set {_slot} to 45
+                loop 9 times:
+                    format slot {_slot} of player with gray stained glass pane named "&b" to run [stop]
+                    add 1 to {_slot}
+                if {playertotalpage.cmd.%player%} > {playercurrentpage.%player%}:
+                    format slot 53 of player with book with no nbt named "&r&eView Next Page" to run [stop]
+                if {playercurrentpage.%player%} is not 1:
+                    format slot 45 of player with book with no nbt named "&r&eView Previous Page" to run [stop]
+                set {_slot} to 0
+                loop 45 times:
+                    format slot {_slot} of player with air to run [stop]
+                    add 1 to {_slot}
+                set {_amount1} to 45 * {playercurrentpage.%player%} - 45 + 1
+                set {_amount2} to 45 * {playercurrentpage.%player%} + 1
+                set {_slot} to 0
+                loop {commandlogs.%{pinfo.%player%}%::*}:
+                    add 1 to {_total}
+                    if {_total} is between {_amount1} and {_amount2}:
+                        format slot {_slot} of player with paper named "&b%{pinfo.disp.%player%}% on %{time.%loop-value%}%" with lore "&7/%loop-value%" to run [stop]
+                        add 1 to {_slot}
+                    if {_slot} >= 45:
+                        stop loop
+                format slot 49 of player with arrow named "&aGo Back" with lore "&7To Information on %{pinfo.disp.%player%}%" to run [stop]
+                format slot 48 of player with clock with no nbt named "&aRefresh command log" with lore "&7For %{pinfo.disp.%player%}%" to run [stop]
+                set {gui.%player%} to true  
+                stop
+        if item is clock with no nbt named "&aRefresh command log" with lore "&7For %{pinfo.%player%}%":
+            play sound "item.book.page_turn" with volume 1000 and pitch 1 to the player
+            close player's inventory
+            send "&bRefreshing %{pinfo.%player%}%&b's command log..."
+            if {gui.%player%} is not set:
+                play sound "item.book.page_turn" with volume 2 and pitch 1 to the player
+                open virtual chest inventory with size 6 named "%{pinfo.%player%}%'s CMD Logs (%{playercurrentpage.%player%}%/%{playertotalpage.cmd.%player%}%)" to player
+                set {_slot} to 0
+                if {commandlogs.%{pinfo.%player%}%::*} is not set:
+                    format slot 22 of player with red stained glass pane named "&cNo command history found for %{pinfo.disp.%player%}%" to run [stop]
+                set {_slot} to 45
+                loop 9 times:
+                    format slot {_slot} of player with gray stained glass pane named "&b" to run [stop]
+                    add 1 to {_slot}
+                if {playertotalpage.cmd.%player%} > {playercurrentpage.%player%}:
+                    format slot 53 of player with book with no nbt named "&r&eView Next Page" to run [stop]
+                if {playercurrentpage.%player%} is not 1:
+                    format slot 45 of player with book with no nbt named "&r&eView Previous Page" to run [stop]
+                set {_slot} to 0
+                loop 45 times:
+                    format slot {_slot} of player with air to run [stop]
+                    add 1 to {_slot}
+                set {_amount1} to 45 * {playercurrentpage.%player%} - 45 + 1
+                set {_amount2} to 45 * {playercurrentpage.%player%} + 1
+                set {_slot} to 0
+                loop {commandlogs.%{pinfo.%player%}%::*}:
+                    add 1 to {_total}
+                    if {_total} is between {_amount1} and {_amount2}:
+                        format slot {_slot} of player with paper named "&b%{pinfo.disp.%player%}% on %{time.%loop-value%}%" with lore "&7/%loop-value%" to run [stop]
+                        add 1 to {_slot}
+                    if {_slot} >= 45:
+                        stop loop
+                format slot 49 of player with arrow named "&aGo Back" with lore "&7To Information on %{pinfo.disp.%player%}%" to run [stop]
+                format slot 48 of player with clock with no nbt named "&aRefresh command log" with lore "&7For %{pinfo.disp.%player%}%" to run [stop]
+                set {gui.%player%} to true  
+        if {pickplayer.pinfo.%player%} is true:
+            if clicked slot is between 9 and 44:
+                if item is a player skull:
+                    make player execute command "playerinfo %{slot.%clicked slot%}%"
+            if item is paper with no nbt named "&bRefresh players" with lore "&7Refresh the player list!", "&7" and "&6Click to refresh!":
+                close player's inventory
+                send "&bRefreshing..."
+                make player execute command "playerinfo"
+
+command /pinfo [<offlineplayer>]:
+    aliases: /playerinfo, /pi, /rebeldupe:pinfo, /rebeldupe:playerinfo, /rebeldupe:pi
+    permission: staff.pinfo.use
+    permission message: &cYou don't have permission to view player information!
+    trigger:
+        if arg 1 is not set:
+            if {gui.%player%} is not set:
+                open virtual chest inventory with size 3 named "Pick a player [LOADING]" to sender
+                wait 1 tick
+            open virtual chest inventory with size 6 named "Pick a player" to sender
+            set {_slot} to 0
+            loop 54 times:
+                if {_slot} is between 0 and 8:
+                    format slot {_slot} of player with gray stained glass pane with no nbt named "&f" to run [stop]
+                if {_slot} is between 45 and 53:
+                    format slot {_slot} of player with gray stained glass pane with no nbt named "&f" to run [stop]
+                add 1 to {_slot}
+            set {_slot} to 9
+            loop all players:
+                format slot {_slot} of player with loop-player's skull named "&eView player information for %loop-player%" with lore "&7Click to view info for %loop-player%" to run [stop]
+                set {slot.%{_slot}%} to loop-player
+                add 1 to {_slot}
+            format slot 49 of player with paper with no nbt named "&bRefresh players" with lore "&7Refresh the player list!", "&7" and "&6Click to refresh!" to run [stop]
+            format slot 53 of player with sign with no nbt named "&bType &7/playerinfo <player> &bto view an offline player" to run [stop]
+            set {gui.%player%} to true
+            set {pickplayer.pinfo.%player%} to true
+            stop
+        if arg 1 is set:
+            if {gui.%player%} is not set:
+                open virtual chest inventory with size 5 named "Information on %arg 1's display name% [LOADING]" to sender
+                wait 1 tick
+            set {pinfo.%player%} to arg-1
+            set {pinfo.disp.%player%} to arg-1
+            set {pinfo.dispn.%player%} to arg-1's display name
+            open virtual chest inventory with size 5 named "Information on %{pinfo.%player%}%" to sender
+            set {_slot} to 0
+            loop 45 times:
+                format slot {_slot} of player with gray stained glass pane with no nbt named "&f" to run [stop]
+                add 1 to {_slot}
+            set {_slot} to 9
+            loop 9 times:
+                if arg-1 is online:
+                    format slot {_slot} of player with lime stained glass pane named "&a✔ %{pinfo.disp.%player%}% &ais online!" to run [stop]
+                    add 1 to {_slot}
+                if arg-1 is offline:
+                    format slot {_slot} of player with red stained glass pane named "&c❌ %{pinfo.disp.%player%}% &cis offline!" to run [stop]
+                    add 1 to {_slot}
+            format slot 4 of player with arg-1's skull named "&bInformation on %{pinfo.%player%}%" to run [stop]
+            if arg-1 is offline:
+                format slot 23 of player with ender pearl named "&b%{pinfo.disp.%player%}%&b's log-out location:" with lore "&7%{quit.position.x.%arg-1%}%&7x // %{quit.position.y.%arg-1%}%&7y // %{quit.position.z.%arg-1%}%&7z", "&7", "&b%{pinfo.disp.%player%}%&b was last seen:", "&7%{joined.date.%arg-1%}%", "&b" and "&eClick to teleport!" to run [stop]
+            if arg-1 is online:
+                format slot 23 of player with ender pearl named "&b%{pinfo.disp.%player%}%&b's Last Known Logout Location:" with lore "&7%{pinfo.disp.%player%}%&7 is currently online", "&7" and "&eClick to teleport!" to run [stop]
+#            format slot 30 of player with grass block named "&b%{pinfo.disp.%player%}%&b's Block Logs" with lore "&7Note: Will not update whilst you're in the GUI", "&7" and "&eClick to view block logs!" to run [stop]
+            format slot 30 of player with barrier named "&4%{pinfo.disp.%player%}%&4's Block Logs" with lore "&7This feature is a work in progress!" to run [stop]
+            format slot 31 of player with paper named "&b%{pinfo.disp.%player%}%&b's Chat Logs" with lore "&7Note: Will not update whilst you're in the GUI", "&7" and "&eClick to view chat logs!" to run [stop]
+            format slot 32 of player with command block named "&b%{pinfo.disp.%player%}%&b's Command Logs" with lore "&7Note: Will not update whilst you're in the GUI", "&7" and "&eClick to view command logs!" to run [stop]
+            format slot 22 of player with diamond helmet with no nbt named "&b%{pinfo.disp.%player%}%&b's Inventory" with lore "&7View %{pinfo.%player%}%&7's inventory", "&7" and "&eClick to view!" to run [stop]
+            format slot 21 of player with ender chest with no nbt named "&b%{pinfo.disp.%player%}%&b's Ender Chest" with lore "&7View %{pinfo.%player%}%&7's ender chest", "&7" and "&eClick to view!" to run [stop]
+            if {joined.%arg-1%} is not set:
+                format slot 21 of player with barrier named "&c❌ %{pinfo.disp.%player%}% has never logged in before!" to run [stop]
+                format slot 22 of player with barrier named "&c❌ %{pinfo.disp.%player%}% has never logged in before!" to run [stop]
+                format slot 23 of player with barrier named "&c❌ %{pinfo.disp.%player%}% has never logged in before!" to run [stop]
+                format slot 31 of player with barrier named "&c❌ %{pinfo.disp.%player%}% has never logged in before!" to run [stop]
+                format slot 30 of player with barrier named "&c❌ %{pinfo.disp.%player%}% has never logged in before!" to run [stop]
+                format slot 32 of player with barrier named "&c❌ %{pinfo.disp.%player%}% has never logged in before!" to run [stop]
+            set {gui.%player%} to true
+            set {pinfo.gui.%player%} to true
+
+command /invsee [<offlineplayer>]:
+    permission: staff.invsee.use
+    permission message: &cYou do not have permission to run this command.
+    aliases: /rebeldupe:invsee
+    trigger:
+        if arg 1 is not set:
+            send "&cMissing arguments! &7/invsee <player>"
+            stop
+        if arg 1 is set:
+            send "&cThis is under construction!"

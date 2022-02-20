@@ -1,0 +1,106 @@
+# ------------------------------------------------------------------------------------------------------
+# REBELDUPE SKRIPT
+# > freeze.sk
+#
+# This is one of the publicly-released scripts from RebelDupe on github.com/CyberedCake/RDScripts. Feel free to use whatever you'd like or use the script in your server altogether to help keep the void dupe genre alive or maybe for your own server ideas!
+#
+# Thank you to the developers who created these: Lynxdeer, TehCheese, Luke, and CyberedCake
+# Thank you to the RebelDupe community for supporting us and making the best possible few years (writing on February 2022) that we could ever ask for. This server has created memories for all and we thank every single one of you out there for it, no matter how big or small of an impact you had.
+# THANK *YOU*!
+#
+# For now, the Discord server will remain alive, which you can join at dsc.gg/rebeldupe
+# If you need any help, you can direct message any of the developers of these scripts:
+#   Lynxdeer  (Lynxdeer#5243    ||  431961511557070868)
+#   Cheese    (TehCheese#1075   ||  493453098199547905)
+#   Luke      (LukeIThink#5106  ||  296823576156307467)
+#   Cyber     (CyberCake#9221   ||  351410272256262145)
+# And if you need help with anything else, you can DM Rebel (the creator and owner of RebelDupe):
+#   Rebel     (Butler#3727      ||  193938515342393345)
+#
+# IMPORTANT SKRIPT NOTE: Some of these scripts rely on certain locations, variables, people, etc. that will need to be adjusted for a server if any developers out there are going to use it for their purposes
+#
+# This text doesn't have to stay, remove it if you wish
+# ------------------------------------------------------------------------------------------------------
+
+#freeze
+#
+#
+#
+#
+#
+#
+#
+#
+#
+
+command /freeze [<offlineplayer>]:
+	usage: &cInvalid usage! &7/freeze <player>
+	permission: staff.freeze
+	permission message: &cYou do not have permission to execute this command!
+	aliases: /rebeldupe:freeze
+	trigger:
+		send "&cThis command is under construction!"
+		stop
+		if {freeze::%arg 1's uuid%} is not set:
+			send "&bYou froze &e%arg 1%"
+			set {freeze::%arg 1's uuid%} to true
+			open virtual chest with 1 row named "&3&lYou're frozen!" to arg-1
+			fillGUI(arg-1, 1, gray stained glass pane)
+			format slot 4 of arg-1 with yellow stained glass pane named "&aScreenshare in Discord" with lore "&7Click here to testify against that you're cheating!", "&7", "&c&lREQUIRES DISCORD" and "&eClick to join the Discord" to run [stop]
+			format slot 0 of arg-1 with red stained glass pane named "&aAdmit" with lore "&7Admit to the fact that you're cheating", "&7", "&c5 day ban", "&b" and "&eClick to admit to cheating" to run [stop]
+			format slot 8 of arg-1 with red stained glass pane named "&aAdmit" with lore "&7Admit to the fact that you're cheating", "&7", "&c5 day ban", "&b" and "&eClick to admit to cheating" to run [stop]
+			stop
+		if {freeze::%arg 1's uuid%} is true:
+			send "&bYou unfroze &e%arg 1%"
+			delete {freeze::%arg 1's uuid%}
+			close arg-1's inventory
+			stop
+
+on any movement:
+	if {freeze::%player's uuid%} is true:
+		cancel event
+
+on command:
+	if {freeze::%player's uuid%} is true:
+		if "%command%" is not "freeze" or "fr" or "discord" or "forums" or "rebeldupe" or "store" or "sk" or "skript":
+			cancel event
+			send "&cYou cannot run that command whilst you're frozen!"
+			stop
+
+on inventory close:
+	if {freeze::%player's uuid%} is true:
+		wait 2 seconds
+		if {freeze::%player's uuid%} is true:
+			open virtual chest with 1 row named "&3&lYou're frozen!" to player
+			fillGUI(player, 1, gray stained glass pane)
+			format slot 4 of player with yellow stained glass pane named "&aScreenshare in Discord" with lore "&7Click here to testify against that you're cheating!", "&7", "&c&lREQUIRES DISCORD" and "&eClick to join the Discord" to run [stop]
+			format slot 0 of player with red stained glass pane named "&aAdmit" with lore "&7Admit to the fact that you're cheating", "&7", "&c5 day ban", "&b" and "&eClick to admit to cheating" to run [stop]
+			format slot 8 of player with red stained glass pane named "&aAdmit" with lore "&7Admit to the fact that you're cheating", "&7", "&c5 day ban", "&b" and "&eClick to admit to cheating" to run [stop]
+
+on click:
+	if item is a red stained glass pane named "&aAdmit" with lore "&7Admit to the fact that you're cheating", "&7", "&c5 day ban", "&b" and "&eClick to admit to cheating":
+		delete {freeze::%player's uuid%}
+		execute console command "sendpunished %player%"
+		close player's inventory
+		wait 0.2 seconds
+		execute console command "ban %player% 5 d Cheating through the use of unfair advantages -s"
+
+on break:
+	if {freeze::%player's uuid%} is true:
+		cancel event	
+		send "&cYou cannot break blocks whilst you're frozen!"
+
+on drop:
+	if {freeze::%player's uuid%} is true:
+		cancel event	
+		send "&cYou cannot drop items whilst you're frozen!"
+
+on place:
+	if {freeze::%player's uuid%} is true:
+		cancel event	
+		send "&cYou cannot place blocks whilst you're frozen!"
+
+on damage of player:
+	if {freeze::%victim's uuid%} is true:
+		cancel event
+		send "&cYou cannot attack %victim% &csince they're frozen!" to attacker
