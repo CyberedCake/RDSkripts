@@ -19,7 +19,7 @@ Thank ->**YOU**<-
 ---
 ## Download Files
 ### Follow these instructions to learn how to download all the scripts at once
-![/Failed to load DownloadAllScripts.png](assets/DownloadAllScripts.jpg)
+![/Failed to load DownloadAllScripts.jpg](assets/DownloadAllScripts.jpg)
 
 ---
 
