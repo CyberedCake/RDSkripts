@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://github.com/CyberedCake/RDScripts/tree/main/assets/RebelDupeLogo.png?raw=true" />
+  <img src="https://raw.githubusercontent.com/CyberedCake/RDScripts/main/assets/RebelDupeLogo.png" />
 </p>
 
 # RebelDupe Archived Skripts
