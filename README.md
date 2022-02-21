@@ -1,8 +1,8 @@
 <p align="center">
   <img src="https://raw.githubusercontent.com/CyberedCake/RDScripts/main/assets/RebelDupeLogo.png" />
 </p>
+<h1 align="center">RebelDupe Archived Skripts</h1>
 
-# RebelDupe Archived Skripts
 These are the publicly-released scripts from RebelDupe! Feel free to use them for whatever you like, portions or 
 entire scripts, for your server! Hopefully the dupe genre will stay alive and prosper after this release.
 
