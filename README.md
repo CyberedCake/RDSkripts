@@ -29,9 +29,10 @@ Thank ->**YOU**<-
 [activity.sk](https://github.com/CyberedCake/RDScripts/blob/main/scripts/activity.sk) ||
 [arcade.sk](https://github.com/CyberedCake/RDScripts/blob/main/scripts/arcade.sk)
 
-### "b..." (2 scripts)
+### "b..." (3 scripts)
 [ban.sk](https://github.com/CyberedCake/RDScripts/blob/main/scripts/ban.sk) ||
-[bounties.sk](https://github.com/CyberedCake/RDScripts/blob/main/scripts/bounties.sk)
+[bounties.sk](https://github.com/CyberedCake/RDScripts/blob/main/scripts/bounties.sk) ||          
+[bosses.sk](https://github.com/CyberedCake/RDScripts/blob/main/scripts/bosses.sk)
 
 ### "c..." (3 scripts)
 [channels.sk](https://github.com/CyberedCake/RDScripts/blob/main/scripts/channels.sk) ||
@@ -109,4 +110,4 @@ Thank ->**YOU**<-
 | :-------------: | :---------: | :----------------: |
 | Rebel           | Butler#3727 | 193938515342393345 |
 
-### Last Updated: `February 20th, 2022`
+### Last Updated: `February 22th, 2022`

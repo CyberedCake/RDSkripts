@@ -1,0 +1,403 @@
+# ------------------------------------------------------------------------------------------------------
+# REBELDUPE SKRIPT
+# > bosses.sk
+#
+# This is one of the publicly-released scripts from RebelDupe on github.com/CyberedCake/RDScripts. Feel free to use whatever you'd like or use the script in your server altogether to help keep the void dupe genre alive or maybe for your own server ideas!
+#
+# Thank you to the developers who created these: Lynxdeer, TehCheese, Luke, and CyberedCake
+# Thank you to the RebelDupe community for supporting us and making the best possible few years (writing on February 2022) that we could ever ask for. This server has created memories for all and we thank every single one of you out there for it, no matter how big or small of an impact you had.
+# THANK *YOU*!
+#
+# For now, the Discord server will remain alive, which you can join at dsc.gg/rebeldupe
+# If you need any help, you can direct message any of the developers of these scripts:
+#   Lynxdeer  (Lynxdeer#5243    ||  431961511557070868)
+#   Cheese    (TehCheese#1075   ||  493453098199547905)
+#   Luke      (LukeIThink#5106  ||  296823576156307467)
+#   Cyber     (CyberCake#9221   ||  351410272256262145)
+# And if you need help with anything else, you can DM Rebel (the creator and owner of RebelDupe):
+#   Rebel     (Butler#3727      ||  193938515342393345)
+#
+# IMPORTANT SKRIPT NOTE: Some of these scripts rely on certain locations, variables, people, etc. that will need to be adjusted for a server if any developers out there are going to use it for their purposes
+#
+# This text doesn't have to stay, remove it if you wish
+# ------------------------------------------------------------------------------------------------------
+
+#	D
+
+every 2 seconds in "bosses":
+	if {bossspawn} is true:
+		set {bossspawn} to false
+		set {boss} to true
+		set {chance} to random integer between 0 and 100
+		if {chance} is between 0 and 25:
+			broadcast ""
+			broadcast "&fA &lGolem Boss &fhas spawned at the boss arena! do /warp bosses to fight it!"
+			broadcast ""
+			spawn an iron golem above {bspawn}
+			set the display name of the last spawned iron golem to "&f&lGolem Boss"
+			set the max health of the last spawned iron golem to 800
+			set the health of the last spawned iron golem to 800
+			apply resistance without particles to the last spawned iron golem
+			apply strength 19 without particles to the last spawned iron golem
+			apply fire resistance without particles to the last spawned iron golem
+			loop all players:
+				delete {bdamage.%loop-player%}
+		if {chance} is between 26 and 50:
+			broadcast ""
+			broadcast "&fA &8Death Boss &fhas spawned at the boss arena! do /warp bosses to fight it!"
+			broadcast ""
+			spawn a wither skeleton above {bspawn}
+			set the display name of the last spawned wither skeleton to "&8&lDeath Boss"
+			set the max health of the last spawned wither skeleton to 400
+			set the health of the last spawned wither skeleton to 400
+			apply resistance without particles to the last spawned wither skeleton
+			apply strength 20 without particles to the last spawned wither skeleton
+			apply fire resistance without particles to the last spawned wither skeleton
+			set the chestplate of the last spawned wither skeleton to netherite chestplate
+			set the leggings of the last spawned wither skeleton to netherite boots
+			set the tool of the last spawned wither skeleton to iron hoe
+			loop all players:
+				delete {bdamage.%loop-player%}
+			delete {bdmgers::*}
+		if {chance} is between 51 and 75:
+			broadcast ""
+			broadcast "&fA &6Greed Boss &fhas spawned at the boss arena! do /warp bosses to fight it!"
+			broadcast ""
+			spawn a baby zombie above {bspawn}
+			set the display name of the last spawned baby zombie to "&6Greed Boss"
+			set the max health of the last spawned baby zombie to 500
+			set the health of the last spawned baby zombie to 500
+			set the helmet of the last spawned baby zombie to gold block
+			set the chestplate of the last spawned baby zombie to unbreakable gold chestplate
+			set the leggings of the last spawned baby zombie to unbreakable gold leggings
+			set the boots of the last spawned baby zombie to unbreakable gold boots
+			set the tool of the last spawned baby zombie to unbreakable golden axe of sharpness 5
+			apply resistance without particles to the last spawned baby zombie
+			apply fire resistance without particles to the last spawned baby zombie
+			apply strength 15 without particles to the last spawned baby zombie
+			loop all players:
+				delete {bdamage.%loop-player%}
+			delete {bdmgers::*}
+		if {chance} is between 76 and 100:
+			broadcast ""
+			broadcast "&fA &aBoomer Boss &fhas spawned at the boss arena! do /warp bosses to fight it!"
+			broadcast ""
+			spawn an adult zombie above {bspawn}
+			set the display name of the last spawned adult zombie to "&aBoomer Boss"
+			set the max health of the last spawned adult zombie to 500
+			set the health of the last spawned adult zombie to 500
+			apply resistance without particles to the last spawned adult zombie
+			apply fire resistance without particles to the last spawned adult zombie
+			apply strength 10 without particles to the last spawned adult zombie
+			apply speed 4 without particles to the last spawned adult zombie
+			set the helmet of the last spawned baby zombie to tnt
+			set the chestplate of the last spawned baby zombie to unbreakable iron chestplate
+			set the leggings of the last spawned baby zombie to unbreakable iron leggings
+			set the boots of the last spawned baby zombie to unbreakable iron boots
+			loop all players:
+				delete {bdamage.%loop-player%}
+			delete {bdmgers::*}
+
+on damage:
+	victim is in world "bosses"
+	victim's display name contains "Boomer"
+	damager is not a player
+	cancel event
+
+every 30 ticks in "bosses":
+	loop all entities:
+		loop-entity's display name contains "Boomer"
+		loop-entity is in world "bosses"
+		create a safe explosion of force 5 at loop-entity
+
+on damage:
+	damager is a player
+	victim is in world "bosses"
+	victim's display name contains "Golem Boss" or "Death Boss" or "Greed Boss" or "Boomer Boss"
+	add damage to {bdamage.%damager%}
+	add damager to {bdmgers::*}
+
+on death:
+	display name of the victim contains "&lGolem Boss"
+	victim is in world "bosses"
+	clear drops
+	wait 1 tick
+	set {bdrop1} to random element out of {bdmgers::*}
+	set {bdrop2} to random element out of {bdmgers::*}
+	set {chance} to random integer between 1 and 4
+	if {chance} is 1:
+		set {item} to iron helmet named "&fGolem Helm" with lore "&7Tough!" and "&6Full set bonus | Golem" and "&fTake 50%% less damage!" and "&eOwner: &f%{bdrop1}%" 
+	if {chance} is 2:
+		set {item} to iron chestplate named "&fGolem Chestplate" with lore "&7Tough!" and "&6Full set bonus | Golem" and "&fTake 50%% less damage!" and "&eOwner: &f%{bdrop1}%" 
+	if {chance} is 3:
+		set {item} to iron leggings named "&fGolem Pants" with lore "&7Tough!" and "&6Full set bonus | Golem" and "&fTake 50%% less damage!" and "&eOwner: &f%{bdrop1}%" 
+	if {chance} is 4:
+		set {item} to iron boots named "&fGolem Boots" with lore "&7Tough!" and "&6Full set bonus | Golem" and "&fTake 50%% less damage!" and "&eOwner: &f%{bdrop1}%" 
+	drop {item} at event-entity
+	set {chance} to random integer between 1 and 4
+	if {chance} is 1:
+		set {item} to iron helmet named "&fGolem Helm" with lore "&7Tough!" and "&6Full set bonus | Golem" and "&fTake 50%% less damage!" and "&eOwner: &f%{bdrop2}%" 
+	if {chance} is 2:
+		set {item} to iron chestplate named "&fGolem Chestplate" with lore "&7Tough!" and "&6Full set bonus | Golem" and "&fTake 50%% less damage!" and "&eOwner: &f%{bdrop2}%" 
+	if {chance} is 3:
+		set {item} to iron leggings named "&fGolem Pants" with lore "&7Tough!" and "&6Full set bonus | Golem" and "&fTake 50%% less damage!" and "&eOwner: &f%{bdrop2}%" 
+	if {chance} is 4:
+		set {item} to iron boots named "&fGolem Boots" with lore "&7Tough!" and "&6Full set bonus | Golem" and "&fTake 50%% less damage!" and "&eOwner: &f%{bdrop2}%"
+	wait 1 tick
+	drop {item} at event-entity
+	broadcast "&8--------------------------"
+	broadcast "&6&lGolem Boss Down!"
+	broadcast "&6Final Hit: &f%damager%"
+	loop all players:
+		send "&6Your Damage: &f%{bdamage.%loop-player%}%"
+	broadcast "&7Boss drops are calculated based on damage and luck. The more damage you do, the more likely you get a boss drop!"
+	broadcast "&8--------------------------"
+	set {bossspawn} to false
+	set {boss} to false
+	set {bosstime} to 180
+
+on player pickup:
+	event is not canceled
+	player is in world "bosses"
+	event-item's name contains "Golem"
+	broadcast "&6%player% &6picked up %event-item's name% &6from the golem boss!"
+
+on player pickup:
+	event is not canceled
+	player is in world "bosses"
+	event-item's name contains "Scythe of Death"
+	broadcast "&6%player% &6picked up %event-item's name% &6from the death boss!"
+
+on player pickup:
+	event is not canceled
+	player is in world "bosses"
+	event-item's name contains "Boomer Bow"
+	broadcast "&6%player% &6picked up %event-item's name% &6from the boomer boss!"
+
+on death:
+	display name of the victim contains "Death Boss"
+	victim is in world "bosses"
+	clear drops
+	broadcast "&8--------------------------"
+	broadcast "&6&lDeath Boss Down!"
+	broadcast "&6Final Hit: &f%damager%"
+	loop all players:
+		send "&6Your Damage: &f%{bdamage.%loop-player%}%"
+	broadcast "&7Boss drops are calculated based on damage and luck. The more damage you do, the more likely you get a boss drop!"
+	broadcast "&8--------------------------"
+	wait 1 tick
+	set {bdrop1} to random element out of {bdmgers::*}
+	drop an iron hoe named "&8Scythe of Death" with lore "&7D E A T H" and "&eOwner: &f%{bdrop1}%" with nbt "{AttributeModifiers:[{AttributeName:""generic.attack_damage"",Amount:15,Operation:0,UUID:[I;-120710,23544,16613,-47088],Slot:mainhand,Name:""generic.attack_damage""}]}" at victim
+	set {bossspawn} to false
+	set {boss} to false
+	set {bosstime} to 180
+
+on death:
+	display name of the victim contains "Greed Boss"
+	victim is in world "bosses"
+	clear drops
+	broadcast "&8--------------------------"
+	broadcast "&6&lGreed Boss Down!"
+	broadcast "&6Final Hit: &f%damager%"
+	loop all players:
+		send "&6Your Damage: &f%{bdamage.%loop-player%}%"
+	broadcast "&8--------------------------"
+	loop all players:
+		{bdmgers::*} contains loop-player
+		send "&eYou got $%round(({bdamage.%loop-player%} * 2))% &efrom the greed boss!" to loop-player
+		send "&7Money from the boss is your damage multiplied by 2."
+		add round(({bdamage.%loop-player%} * 2)) to loop-player's balance
+	set {bossspawn} to false
+	set {boss} to false
+	set {bosstime} to 180
+	
+on death:
+	display name of the victim contains "Boomer Boss"
+	victim is in world "bosses"
+	clear drops
+	broadcast "&8--------------------------"
+	broadcast "&6&lBoomer Boss Down!"
+	broadcast "&6Final Hit: &f%damager%"
+	loop all players:
+		send "&6Your Damage: &f%{bdamage.%loop-player%}%"
+	broadcast "&7Boss drops are calculated based on damage and luck. The more damage you do, the more likely you get a boss drop!"
+	broadcast "&8--------------------------"
+	wait 1 second
+	wait 1 tick
+	set {bdrop1} to random element out of {bdmgers::*}
+	drop a bow named "&aBoomer Bow" with lore "&7boom" and "&eOwner: &f%{bdrop1}%" at victim
+	set {bossspawn} to false
+	set {boss} to false
+	set {bosstime} to 180
+
+on combust:
+	event-entity is an iron golem
+	event-entity is in world "bosses"
+	extinguish the event-entity
+
+command /bossesdebug:
+	permission: dev.bosses
+	permission message: &cThis is for dev debugging purposes!
+	trigger:
+		set {bossspawn} to false
+		set {boss} to false
+		set {bosstime} to 180
+		send "Debugged."
+
+on rightclick on end portal frame:
+	player is in world "bosses"
+	block below event-block is end portal frame
+	cancel event
+	set {bspawn} to location above event-block
+	open chest with 3 rows named "Next boss" to player
+	if {boss} is not true:
+		format gui slot 13 of player with red wool named "&cBoss" with lore "&7The boss will spawn in %{bosstime}% &7minutes!" and "&7Click to shorten that time!" to run:
+			open chest with 3 rows named "Shorten boss time" to player
+			format gui slot 10 of player with lime wool named "&a5 Minutes" with lore "&fCost: $100" to run:
+				if {bossspawn} is true:
+					send "&cThe boss has already spawned!"
+					stop
+				remove 5 from {bosstime}
+				broadcast "&6%player% &6shortened the boss time by 5 minutes!"
+				close inventory for player
+				remove 100 from player's balance
+			format gui slot 11 of player with lime wool named "&a15 Minutes" with lore "&fCost: $300" to run:
+				if {bossspawn} is true:
+					close inventory for player
+					send "&cThe boss has already spawned!"
+					stop
+				remove 15 from {bosstime}
+				broadcast "&6%player% &6shortened the boss time by 15 minutes!"
+				close inventory for player
+				remove 300 from player's balance
+			format gui slot 12 of player with lime wool named "&a30 Minutes" with lore "&fCost: $600" to run:
+				if {bossspawn} is true:
+					close inventory for player
+					send "&cThe boss has already spawned!"
+					stop
+				remove 30 from {bosstime}
+				broadcast "&6%player% &6shortened the boss time by 30 minutes!"
+				close inventory for player
+				remove 600 from player's balance
+			format gui slot 13 of player with lime wool named "&a1 hour" with lore "&fCost: $1200" to run:
+				if {bossspawn} is true:
+					send "&cThe boss has already spawned!"
+					close inventory for player
+					stop
+				remove 60 from {bosstime}
+				broadcast "&6%player% &6shortened the boss time by an hour!"
+				close inventory for player
+				remove 1200 from player's balance
+			format gui slot 14 of player with lime wool named "&aAll" with lore "&fCost: $%({bosstime} * 20)%" to run:
+				if {bossspawn} is true:
+					send "&cThe boss has already spawned!"
+					close inventory for player
+					stop
+				send "&cTemporarily disabled! Use the other buttons!"
+				stop
+				remove {bosstime} from {bosstime}
+				remove ({bosstime} * 20) from player's balance
+				broadcast "&6%player% &6spawned a boss by shortening the boss time to 0!"
+				close inventory for player
+				set {bossspawn} to true
+			if {bosstime} is less than 1:
+				set {bossspawn} to true
+	if {boss} is true:
+		format gui slot 13 of player with lime wool named "&aBoss" with lore "&7The boss has spawned! Go fight it! (or it broke, please wait)" to close
+
+every minute:
+	{boss} is not true
+	if {bosstime} is not less than 1:
+		remove 1 from {bosstime}
+	if {bosstime} is less than 1:
+		set {bossspawn} to true		
+
+command /setbosstime [<integer>]:
+	permission: dev.bosses
+	permission message: &cThis is for dev testing purposes!
+	trigger:
+		set {bosstime} to arg-1
+		send "&aSet the time to spawn the next boss to %arg-1%&a."
+
+every second in "bosses":
+	loop all players:
+		loop-player is in world "bosses"
+		loop-player is not op
+		loop-player does not have the permission "rank.mod"
+		loop-player's gamemode is survival
+		set loop-player's flight state to false
+
+on damage:
+	victim's name contains "Death Boss"
+	chance of 45%:
+		loop players in radius 5 around victim:
+			damage the loop-player by 0.75
+			remove wither from the loop-player
+			apply wither 7 without particles to loop-player for 5 seconds
+			play sound "block.soul_sand.break" to loop-player
+			play sound "block.soul_sand.break" to loop-player
+			play sound "block.soul_sand.break" to loop-player
+
+on damage:
+	victim's name contains "Greed Boss"
+	drop a gold ingot above the victim
+	drop a gold ingot above the victim
+	loop players in radius 5 around victim:
+		damage the loop-player by 2
+		play sound "entity.ender_eye.death" to loop-player
+		play sound "entity.ender_eye.death" to loop-player
+
+on damage:
+	victim's name contains "Golem Boss"
+	chance of 15%:
+		loop players in radius 4 around victim:
+			loop-player's gamemode is survival or adventure
+			damage the loop-player by 4
+			play sound "entity.wither.break_block" to loop-player
+
+on death:
+	damager's name contains "Golem Boss"
+	broadcast "&c%victim% &fwas killed by &cGolem Boss"
+
+on death:
+	damager's name contains "Death Boss"
+	broadcast "&c%victim% &fwas killed by &cDeath Boss"
+
+on death:
+	damager's name contains "Greed Boss"
+	broadcast "&c%victim% &fwas killed by &cGreed Boss"
+
+on death:
+	damager's name contains "Boomer Boss"
+	broadcast "&c%victim% &fwas killed by &cBoomer Boss"
+
+on death:
+	damage cause is entity explosion or block explosion
+	victim is in world "bosses"
+	broadcast "&c%victim% &fwas killed by &cBoomer Boss"
+
+command /bosses [<text>]:
+	usage: &cInvalid Usage! Usage: /bosses
+	aliases: /boss
+	trigger:
+		if arg-1 is set:
+			if player does not have the permission "dev.bosses":
+				execute player command "warp bosses"
+				stop
+			if arg-1 is "debug":
+				set {bossspawn} to false
+				set {boss} to false
+				set {bosstime} to 180
+				send "Debugged."
+			if arg-1 is "spawn":
+				set {boss} to false
+				set {bossspawn} to true
+		else:
+			execute player command "warp bosses"
+			stop
+
+on damage:
+	victim is in world "bosses"
+	damager is a player
+	victim is a player
+	cancel event
