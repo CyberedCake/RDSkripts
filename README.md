@@ -110,4 +110,4 @@ Thank ->**YOU**<-
 | :-------------: | :---------: | :----------------: |
 | Rebel           | Butler#3727 | 193938515342393345 |
 
-### Last Updated: `February 22th, 2022`
+### Last Updated: `February 22nd, 2022`
