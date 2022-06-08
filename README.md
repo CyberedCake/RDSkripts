@@ -98,16 +98,16 @@ Thank ->**YOU**<-
 
 ## Contact the Developers
 ### Have a question about a script? Contact the developers!
-| User             | Discord Tag     | Discord User ID    |
-| :--------------: | :-------------: | :----------------: |
-| Lynxdeer         | Lynxdeer#5243   | 431961511557070868 |
-| Cheese           | TehCheese#1075  | 493453098199547905 |
-| Luke             | LukeIThink#5106 | 296823576156307467 |
-| Cyber            | CyberCake#9221  | 351410272256262145 |
+| User             | Discord Tag       | Discord User ID    |
+| :--------------: | :-------------:   | :----------------: |
+| Lynxdeer         | Lynxdeer#5243     | 431961511557070868 |
+| Cheese           | TehCheese#1075    | 493453098199547905 |
+| Luke             | LukeIThink#5106   | 296823576156307467 |
+| Cyber            | CyberedCake#9221  | 351410272256262145 |
 
 ### If you have other questions relating to something else, you can contact the owner and founder of RebelDupe:
 | User            | Discord Tag | Discord User ID    |
 | :-------------: | :---------: | :----------------: |
 | Rebel           | Butler#3727 | 193938515342393345 |
 
-### Last Updated: `February 22nd, 2022`
+### Last Updated: `June 8th, 2022`
